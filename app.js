@@ -248,9 +248,16 @@ function buildTicket(mode = "safe"){
     `;
   });
 
-  html += `
+  const stake = Number(document.getElementById("stakeInput")?.value || 0);
+const win = Math.round(stake * odds);
+
+html += `
     <p><b>Össz odds:</b></p>
     <div class="ticketOdds">${odds.toFixed(2)}</div>
+
+    <p><b>Tét:</b> ${stake} Ft</p>
+    <p><b>Várható nyeremény:</b> ${win} Ft</p>
+
     <p class="small">Ez nem biztos tipp, hanem döntéstámogató AI-javaslat.</p>
   `;
 
