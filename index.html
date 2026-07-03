@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TippRadar AI v0.7 Smart Data</title>
+<title>TippRadar AI v0.8 Elite</title>
 
 <style>
 *{box-sizing:border-box}
@@ -69,9 +69,7 @@ h1{
   grid-template-columns:repeat(3,1fr);
   gap:10px;
   margin-bottom:14px;
-}
-
-.stat{
+}.stat{
   background:#142033;
   border-radius:14px;
   padding:12px;
@@ -87,7 +85,9 @@ h1{
 .stat span{
   color:#9ca3af;
   font-size:12px;
-}.tabs{
+}
+
+.tabs{
   display:flex;
   gap:10px;
   overflow:auto;
@@ -106,159 +106,110 @@ h1{
   background:#00c853;
 }
 
-select{
+select,input{
   width:100%;
   padding:14px;
   border-radius:14px;
   background:#1e293b;
   color:white;
   border:0;
-  margin-bottom:18px;
+  margin-bottom:14px;
   font-size:15px;
 }
 
-.card{
+.panel{
   background:#142033;
   border-radius:20px;
   padding:18px;
   margin-bottom:20px;
-  box-shadow:0 0 15px rgba(0,255,120,.08);
+}
+
+.panel h2{
+  margin-top:0;
+  color:#00ff99;
+}.card{
+background:#142033;
+border-radius:22px;
+padding:18px;
+margin-bottom:18px;
+box-shadow:0 0 18px rgba(0,255,150,.08);
 }
 
 .league{
-  color:#00ff99;
-  margin-bottom:8px;
+color:#4ade80;
+font-size:15px;
+margin-bottom:8px;
 }
 
 .match{
-  font-size:30px;
-  font-weight:bold;
-  margin-bottom:16px;
+font-size:34px;
+font-weight:bold;
+margin-bottom:16px;
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:12px;
-  margin-bottom:18px;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+margin-bottom:18px;
 }
 
 .box{
-  background:#0b1722;
-  padding:13px;
-  border-radius:14px;
-  text-align:center;
+background:#0b1722;
+border-radius:14px;
+padding:14px;
+text-align:center;
 }
 
 .box span{
-  display:block;
-  color:#9ca3af;
-  font-size:12px;
-  margin-bottom:6px;
+display:block;
+color:#9ca3af;
+font-size:13px;
+margin-bottom:8px;
 }
 
 .box b{
-  font-size:18px;
-  color:#00ff99;
-}
-
-.tip{
-  background:#06361d;
-  border:1px solid #00c853;
-  border-radius:16px;
-  padding:15px;
-  margin-top:12px;
-  line-height:1.45;
-}.badge{
-display:inline-block;
-padding:6px 10px;
-border-radius:20px;
-font-size:12px;
-margin-right:8px;
-margin-top:8px;
-font-weight:bold;
-}
-
-.green{
-background:#0f5132;
-}
-
-.orange{
-background:#7c4a03;
-}
-
-.blue{
-background:#0d47a1;
-}
-
-.favorite{
-width:100%;
-margin-top:15px;
-padding:14px;
-border:none;
-border-radius:14px;
-background:#f5b301;
-font-size:16px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.builder{
-background:#142033;
-padding:18px;
-border-radius:20px;
-margin-bottom:22px;
-}
-
-.builder h2{
-margin-top:0;
+font-size:34px;
 color:#00ff99;
 }
 
-.builder select,
-.builder input{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:none;
-border-radius:12px;
-background:#1e293b;
-color:white;
+.tip{
+background:#08351e;
+border:1px solid #00c853;
+border-radius:16px;
+padding:16px;
+margin-top:14px;
 }
 
-.builder button{
-margin-top:14px;
-width:100%;
-padding:14px;
-background:#00c853;
-color:white;
-border:none;
-border-radius:14px;
-font-size:17px;
+.badge{
+display:inline-block;
+padding:6px 10px;
+border-radius:999px;
+font-size:12px;
 font-weight:bold;
+margin:4px;
+}
+
+.green{background:#0f5132;}
+.orange{background:#8a5a00;}
+.red{background:#7f1d1d;}
+.blue{background:#0c4a6e;}
+
+.button{
+width:100%;
+padding:16px;
+background:#00c853;
+border:0;
+border-radius:14px;
+color:white;
+font-size:18px;
+font-weight:bold;
+margin-top:14px;
 cursor:pointer;
 }
 
-.result{
-margin-top:15px;
-padding:14px;
-border-radius:14px;
-background:#06361d;
-border:1px solid #00c853;
-}
-
-.live{
-display:inline-block;
-background:#7f1d1d;
-padding:6px 10px;
-border-radius:20px;
-font-size:12px;
-margin-bottom:10px;
-color:white;
-}
-
-.hidden{
-display:none;
+.button:hover{
+background:#00a848;
 }nav{
 position:fixed;
 bottom:0;
@@ -280,9 +231,53 @@ cursor:pointer;
 
 .footer{
 text-align:center;
-color:#888;
+color:#94a3b8;
 padding:20px;
 font-size:13px;
+}
+
+.result{
+margin-top:15px;
+padding:15px;
+border-radius:14px;
+background:#08351e;
+border:1px solid #00c853;
+}
+
+.live{
+display:inline-block;
+background:#dc2626;
+padding:6px 10px;
+border-radius:999px;
+font-size:12px;
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.bankroll{
+background:#142033;
+padding:18px;
+border-radius:20px;
+margin-bottom:20px;
+}
+
+.bankroll h2{
+margin-top:0;
+color:#00ff99;
+}
+
+.valueBar{
+height:12px;
+background:#1e293b;
+border-radius:10px;
+overflow:hidden;
+margin-top:10px;
+}
+
+.valueFill{
+height:100%;
+width:82%;
+background:#00c853;
 }
 
 </style>
@@ -294,10 +289,10 @@ font-size:13px;
 
 <h1>⚽ TippRadar AI</h1>
 
-<div class="version">v0.7 SMART DATA</div>
+<div class="version">v0.8 ELITE</div>
 
 <div class="subtitle">
-AI sportelemző • Smart Data Edition
+Elite AI sportelemző • Value Bet Edition
 </div>
 
 </header>
@@ -307,131 +302,97 @@ AI sportelemző • Smart Data Edition
 <input
 id="search"
 class="search"
-placeholder="Keress csapatra vagy bajnokságra..."
-onkeyup="filterMatches()">
+placeholder="Csapat vagy bajnokság keresése...">
 
 <div class="stats">
 
 <div class="stat">
-<b>48</b>
+<b>63</b>
 <span>Mai meccs</span>
 </div>
 
 <div class="stat">
-<b>18</b>
-<span>Top AI Tipp</span>
+<b>22</b>
+<span>Top AI</span>
 </div>
 
 <div class="stat">
-<b>97%</b>
-<span>AI pontosság</span>
+<b>98%</b>
+<span>AI Index</span>
 </div>
 
 </div>
 
 <div class="tabs">
 <div class="tab active">🏠 Mai</div>
-<div class="tab">🔥 Top</div>
+<div class="tab">🔥 Top 10</div>
 <div class="tab">⭐ Kedvencek</div>
-<div class="tab">🧾 Szelvény</div>
-<div class="tab">🔴 Élő</div>
+<div class="tab">💰 Bankroll</div>
 <div class="tab">👤 Profil</div>
 </div>
 
-<select>
-<option>Minden liga</option>
-<option>Premier League</option>
-<option>Serie A</option>
-<option>La Liga</option>
-<option>Bundesliga</option>
-<option>NB I</option>
-</select>
+<div class="bankroll">
 
-<div class="builder">
+<h2>💰 Bankroll kalkulátor</h2>
 
-<h2>🧾 AI Szelvényépítő</h2>
+<input id="bankroll" type="number" placeholder="Teljes bankroll (Ft)">
 
-<select id="ticketType">
-<option>Biztonságos</option>
-<option>Közepes</option>
-<option>Magas odds</option>
-</select>
+<input id="risk" type="number" placeholder="Kockázat (%)">
 
-<input
-id="stake"
-type="number"
-placeholder="Tét (Ft)">
-
-<button onclick="buildTicket()">
-AI szelvény készítése
+<button class="button" onclick="calcStake()">
+Optimális tét számítása
 </button>
 
-<div id="ticketResult" class="result">
-Itt jelenik meg az AI ajánlás.
+<div id="stakeResult" class="result">
+Itt jelenik meg a javasolt tét.
 </div>
 
 </div>
 
-<div id="matches"><div class="card matchCard">
-<div class="live">🔴 ÉLŐ AI JEL</div>
+<div id="matches"><div class="card">
+<div class="live">🔴 ELITE AI JEL</div>
 <div class="league">Serie A</div>
 <div class="match">Roma – Lazio</div>
+
 <div class="grid">
 <div class="box"><span>Goal</span><b>66</b></div>
 <div class="box"><span>BTTS</span><b>70</b></div>
 <div class="box"><span>Corner</span><b>73</b></div>
 <div class="box"><span>Cards</span><b>91</b></div>
 <div class="box"><span>Offside</span><b>58</b></div>
-<div class="box"><span>AI Safe</span><b>94</b></div>
+<div class="box"><span>Value</span><b>82</b></div>
 </div>
+
 <div class="tip">
 <b>Ajánlott piac:</b> Lap Over<br>
 <b>Odds:</b> 1.82<br>
 <span class="badge green">Value bet</span>
 <span class="badge blue">Confidence 94%</span>
-<p>A modell szerint a lapos piac a legerősebb adatjel.</p>
+<div class="valueBar"><div class="valueFill"></div></div>
+<p>Az AI szerint ez a mai egyik legerősebb értékjelzés.</p>
 </div>
-<button class="favorite">⭐ Kedvenchez adás</button>
 </div>
 
-<div class="card matchCard">
+<div class="card">
 <div class="league">La Liga</div>
 <div class="match">Barcelona – Valencia</div>
+
 <div class="grid">
 <div class="box"><span>Goal</span><b>89</b></div>
 <div class="box"><span>BTTS</span><b>82</b></div>
 <div class="box"><span>Corner</span><b>77</b></div>
 <div class="box"><span>Cards</span><b>61</b></div>
 <div class="box"><span>Offside</span><b>55</b></div>
-<div class="box"><span>AI Safe</span><b>88</b></div>
+<div class="box"><span>Value</span><b>78</b></div>
 </div>
+
 <div class="tip">
 <b>Ajánlott piac:</b> Over 2.5<br>
 <b>Odds:</b> 1.67<br>
 <span class="badge green">Erős adatjel</span>
-<p>A gólpiac statisztikai oldalon erős jelzést ad.</p>
+<span class="badge orange">Közepes kockázat</span>
+<p>A gólpiac erős statisztikai támogatást kap.</p>
 </div>
-<button class="favorite">⭐ Kedvenchez adás</button>
-</div>
-
-<div class="card matchCard">
-<div class="league">Premier League</div>
-<div class="match">Liverpool – Arsenal</div>
-<div class="grid">
-<div class="box"><span>Goal</span><b>84</b></div>
-<div class="box"><span>BTTS</span><b>86</b></div>
-<div class="box"><span>Corner</span><b>81</b></div>
-<div class="box"><span>Cards</span><b>74</b></div>
-<div class="box"><span>Offside</span><b>62</b></div>
-<div class="box"><span>AI Safe</span><b>90</b></div>
-</div>
-<div class="tip">
-<b>Ajánlott piac:</b> BTTS<br>
-<b>Odds:</b> 1.74<br>
-<span class="badge green">Value bet</span>
-<p>Mindkét csapat támadó mutatói alapján a BTTS piac kiemelkedik.</p>
-</div>
-<button class="favorite">⭐ Kedvenchez adás</button>
 </div>
 
 </div>
@@ -446,30 +407,18 @@ A TippRadar AI tájékoztató jellegű. A sportfogadás kockázattal jár.
 <div>🏠<br>Mai</div>
 <div>🔥<br>Top</div>
 <div>⭐<br>Kedvenc</div>
-<div>🧾<br>Szelvény</div>
+<div>💰<br>Bankroll</div>
 <div>👤<br>Profil</div>
 </nav>
 
 <script>
-function filterMatches(){
-  let q=document.getElementById("search").value.toLowerCase();
-  document.querySelectorAll(".matchCard").forEach(card=>{
-    card.style.display=card.innerText.toLowerCase().includes(q)?"block":"none";
-  });
-}
-
-function buildTicket(){
-  let type=document.getElementById("ticketType").value;
-  let stake=Number(document.getElementById("stake").value || 0);
-  let odds= type==="Biztonságos" ? 3.05 : type==="Közepes" ? 5.29 : 12.40;
-  document.getElementById("ticketResult").innerHTML =
-  "<b>AI szelvény:</b><br>" +
-  "Roma – Lazio: Lap Over<br>" +
-  "Barcelona – Valencia: Over 2.5<br>" +
-  "Liverpool – Arsenal: BTTS<br><br>" +
-  "Típus: <b>"+type+"</b><br>" +
-  "Becsült odds: <b>"+odds+"</b><br>" +
-  "Lehetséges nyeremény: <b>"+Math.round(stake*odds)+" Ft</b>";
+function calcStake(){
+  let bankroll = Number(document.getElementById("bankroll").value || 0);
+  let risk = Number(document.getElementById("risk").value || 0);
+  let stake = Math.round(bankroll * (risk / 100));
+  document.getElementById("stakeResult").innerHTML =
+  "<b>Javasolt tét:</b> " + stake + " Ft<br>" +
+  "Ajánlott szabály: egy fogadásra általában 1–3% bankroll.";
 }
 </script>
 
