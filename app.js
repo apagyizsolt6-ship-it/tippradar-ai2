@@ -1,21 +1,38 @@
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 let currentView = "all";
 
-function parseMatchLine(line){
-  const p = line.split("|").map(x => x.trim());
 
-  // Forma 1:
-  // Liga | Hazai | Vendég | Odds | Piac
-  if(p.length >= 5){
-    return {
-      league: p[0],
-      home: p[1],
-      away: p[2],
-      odds: parseFloat(p[3].replace(",", ".")),
-      market: p[4]
-    };
+function loadManualMatches(){
+  const text = document.getElementById("matchInput").value.trim();
+
+  if(!text){
+    alert("Adj meg legalább egy meccset!");
+    return;
   }
 
+  matches = [];
+  let errors = [];
+
+  text.split("\n").forEach((line, index)=>{
+    const match = parseMatchLine(line);
+
+    if(match && !isNaN(match.odds)){
+      matches.push(match);
+    }else{
+      errors.push(index + 1);
+    }
+  });
+
+  currentView = "all";
+  hideTicket();
+  renderMatches();
+
+  if(errors.length){
+    alert("Betöltve: " + matches.length + " meccs. Hibás sorok: " + errors.join(", "));
+  }else{
+    alert("Sikeres import: " + matches.length + " meccs.");
+  }
+}
   // Forma 2:
   // Hazai - Vendég | Odds | Piac
   if(p.length >= 3 && p[0].includes("-")){
