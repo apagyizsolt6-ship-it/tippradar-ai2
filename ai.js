@@ -6,18 +6,18 @@ function calculateAI(match){
   const market = (match.market || "").toLowerCase();
   const league = (match.league || "").toLowerCase();
 
-  if(odds >= 1.30 && odds <= 1.65){
+  if(odds >= 1.30 && odds <= 1.60){
     score += 14;
     reasons.push("stabil odds");
-  }else if(odds > 1.65 && odds <= 2.15){
-    score += 22;
+  }else if(odds > 1.60 && odds <= 2.15){
+    score += 23;
     reasons.push("jó value odds");
-  }else if(odds > 2.15 && odds <= 3.20){
-    score += 10;
-    reasons.push("magasabb kockázat");
+  }else if(odds > 2.15 && odds <= 3.50){
+    score += 9;
+    reasons.push("magasabb odds, nagyobb kockázat");
   }else{
-    score -= 8;
-    reasons.push("gyenge odds-tartomány");
+    score -= 10;
+    reasons.push("kockázatos odds-tartomány");
   }
 
   if(market.includes("over") || market.includes("gól")){
@@ -45,6 +45,11 @@ function calculateAI(match){
     reasons.push("les piac");
   }
 
+  if(market.includes("győztes") || market.includes("hazai") || market.includes("vendég")){
+    score += 5;
+    reasons.push("eredmény piac");
+  }
+
   if(
     league.includes("premier") ||
     league.includes("serie") ||
@@ -55,7 +60,7 @@ function calculateAI(match){
     reasons.push("erős bajnokság");
   }
 
-  if(league.includes("nb")){
+  if(league.includes("nb") || league.includes("magyar")){
     score += 4;
     reasons.push("magyar bajnokság");
   }
@@ -63,13 +68,13 @@ function calculateAI(match){
   score = Math.max(1, Math.min(98, score));
 
   let risk = "Magas";
-  if(score >= 85) risk = "Alacsony";
-  else if(score >= 70) risk = "Közepes";
+  if(score >= 86) risk = "Alacsony";
+  else if(score >= 72) risk = "Közepes";
 
   let label = "Gyenge jel";
   if(score >= 88) label = "Nagyon erős AI jel";
-  else if(score >= 78) label = "Value bet jelölt";
-  else if(score >= 68) label = "Közepes adatjel";
+  else if(score >= 80) label = "Erős value jelölt";
+  else if(score >= 70) label = "Közepes adatjel";
 
   return {
     score,
