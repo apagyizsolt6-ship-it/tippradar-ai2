@@ -1,6 +1,38 @@
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 let currentView = "all";
 
+function parseMatchLine(line){
+  const p = line.split("|").map(x => x.trim());
+
+  // Forma 1:
+  // Liga | Hazai | Vendég | Odds | Piac
+  if(p.length >= 5){
+    return {
+      league: p[0],
+      home: p[1],
+      away: p[2],
+      odds: parseFloat(p[3].replace(",", ".")),
+      market: p[4]
+    };
+  }
+
+  // Forma 2:
+  // Hazai - Vendég | Odds | Piac
+  if(p.length >= 3 && p[0].includes("-")){
+    const teams = p[0].split("-").map(x => x.trim());
+
+    return {
+      league: "Kézi import",
+      home: teams[0],
+      away: teams[1],
+      odds: parseFloat(p[1].replace(",", ".")),
+      market: p[2]
+    };
+  }
+
+  return null;
+}
+
 function loadManualMatches(){
   const text = document.getElementById("matchInput").value.trim();
 
@@ -12,20 +44,10 @@ function loadManualMatches(){
   matches = [];
 
   text.split("\n").forEach(line=>{
-    const p = line.split("|");
+    const match = parseMatchLine(line);
 
-    if(p.length >= 4){
-      const odds = parseFloat(p[3].trim().replace(",", "."));
-
-      if(!isNaN(odds)){
-        matches.push({
-          league: p[0].trim(),
-          home: p[1].trim(),
-          away: p[2].trim(),
-          odds: odds,
-          market: p[4] ? p[4].trim() : "Alap piac"
-        });
-      }
+    if(match && !isNaN(match.odds)){
+      matches.push(match);
     }
   });
 
@@ -52,9 +74,7 @@ function getFilteredMatches(){
   let list = [...matches];
 
   if(currentView === "top"){
-    list = list
-      .sort((a,b)=>calculateAI(b).score - calculateAI(a).score)
-      .slice(0,10);
+    list = list.sort((a,b)=>calculateAI(b).score - calculateAI(a).score).slice(0,10);
   }
 
   if(currentView === "favorites"){
@@ -80,18 +100,9 @@ function renderStats(){
     : 0;
 
   box.innerHTML = `
-    <div class="statBox">
-      <b>${total}</b>
-      <span>Meccs</span>
-    </div>
-    <div class="statBox">
-      <b>${topCount}</b>
-      <span>Top AI</span>
-    </div>
-    <div class="statBox">
-      <b>${avg}%</b>
-      <span>Átlag AI</span>
-    </div>
+    <div class="statBox"><b>${total}</b><span>Meccs</span></div>
+    <div class="statBox"><b>${topCount}</b><span>Top AI</span></div>
+    <div class="statBox"><b>${avg}%</b><span>Átlag AI</span></div>
   `;
 }
 
@@ -192,15 +203,12 @@ function buildTicket(mode = "safe"){
   box.classList.remove("hidden");
 
   if(!selected.length){
-    box.innerHTML = `
-      <h2>🧾 AI szelvény</h2>
-      <p>Nincs elég erős meccs ehhez a szelvénytípushoz.</p>
-    `;
+    box.innerHTML = "<h2>🧾 AI szelvény</h2><p>Nincs elég erős meccs ehhez a szelvénytípushoz.</p>";
     return;
   }
 
   let odds = 1;
-  let html = `<h2>🧾 AI szelvény</h2>`;
+  let html = "<h2>🧾 AI szelvény</h2>";
 
   selected.forEach(m=>{
     odds *= m.odds;
@@ -218,18 +226,9 @@ function buildTicket(mode = "safe"){
   });
 
   html += `
-    <p><b>Szelvény típusa:</b> ${
-      mode === "safe" ? "Biztonságos" :
-      mode === "value" ? "Value" :
-      "Magas odds"
-    }</p>
-
-    <p>Össz odds:</p>
+    <p><b>Össz odds:</b></p>
     <div class="ticketOdds">${odds.toFixed(2)}</div>
-
-    <p class="small">
-      Ez nem biztos tipp, hanem döntéstámogató AI-javaslat.
-    </p>
+    <p class="small">Ez nem biztos tipp, hanem döntéstámogató AI-javaslat.</p>
   `;
 
   box.innerHTML = html;
