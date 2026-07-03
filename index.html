@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TippRadar AI v1.1 REAL</title>
+  <title>TippRadar AI v2.0 Mobile</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,27 +11,34 @@
 
 <header>
   <h1>⚽ TippRadar AI</h1>
-  <div class="version">v1.1 REAL</div>
-  <p>Valódi kézi meccsfeltöltés + AI elemzés</p>
+  <div class="version">v2.0 MOBILE</div>
+  <p>Valódi kézi meccsimport • AI elemzés • Szelvényépítő</p>
 </header>
 
 <main>
 
   <section class="panel">
-    <h2>📥 Napi meccsek feltöltése</h2>
-    <p>Formátum soronként:</p>
-    <p class="hint">Liga | Hazai | Vendég | Odds</p>
+    <h2>📥 Meccsek importálása</h2>
+    <p class="hint">Formátum:</p>
+    <p class="hint">Liga | Hazai | Vendég | Odds | Piac</p>
 
-    <textarea id="matchInput" placeholder="NB I | FTC | Paks | 1.82&#10;Premier League | Liverpool | Arsenal | 1.74"></textarea>
+    <textarea id="matchInput" placeholder="NB I | FTC | Paks | 1.82 | Lap Over&#10;Premier League | Liverpool | Arsenal | 1.74 | BTTS"></textarea>
 
     <button onclick="loadManualMatches()">Meccsek betöltése</button>
   </section>
 
   <section class="panel">
-    <input id="searchInput" placeholder="Keresés csapatra vagy ligára..." oninput="renderMatches()">
+    <input id="searchInput" placeholder="Keresés csapatra, ligára vagy piacra..." oninput="renderMatches()">
+
+    <button onclick="showAll()">🏠 Összes meccs</button>
     <button onclick="showTop()">🔥 Top AI lista</button>
-    <button onclick="buildTicket()">🧾 Szelvényépítő</button>
+    <button onclick="showFavorites()">⭐ Kedvencek</button>
+    <button onclick="buildTicket('safe')">🧾 Biztonságos szelvény</button>
+    <button onclick="buildTicket('value')">🎯 Value szelvény</button>
+    <button onclick="buildTicket('high')">🚀 Magas odds szelvény</button>
   </section>
+
+  <section id="statsBox" class="panel"></section>
 
   <section id="ticketBox" class="panel hidden"></section>
 
@@ -40,9 +47,10 @@
 </main>
 
 <nav>
-  <button onclick="renderMatches()">🏠 Mai</button>
-  <button onclick="showTop()">🔥 Top</button>
-  <button onclick="showFavorites()">⭐ Kedvenc</button>
+  <button onclick="showAll()">🏠<br>Mai</button>
+  <button onclick="showTop()">🔥<br>Top</button>
+  <button onclick="showFavorites()">⭐<br>Kedvenc</button>
+  <button onclick="buildTicket('safe')">🧾<br>Szelvény</button>
 </nav>
 
 <script src="matches.js"></script>
