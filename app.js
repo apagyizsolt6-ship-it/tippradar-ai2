@@ -117,7 +117,9 @@ function renderStats(){
     : 0;
 html += `
   <button onclick="copyTicket()">📋 Szelvény másolása</button>
-
+html += `
+  <button onclick="copyTicket()">📋 Szelvény másolása</button>
+`;
   box.innerHTML = `
     <div class="statBox"><b>${total}</b><span>Meccs</span></div>
     <div class="statBox"><b>${topCount}</b><span>Top AI</span></div>
@@ -256,6 +258,11 @@ function buildTicket(mode = "safe"){
 }
 
 renderMatches();function copyTicket(){
+  const text = document.getElementById("ticketBox").innerText;
+  navigator.clipboard.writeText(text);
+  alert("Szelvény kimásolva!");
+}
+function copyTicket(){
   const text = document.getElementById("ticketBox").innerText;
   navigator.clipboard.writeText(text);
   alert("Szelvény kimásolva!");
