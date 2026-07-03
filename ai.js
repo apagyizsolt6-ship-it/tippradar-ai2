@@ -1,75 +1,79 @@
-function calculateAI(match) {
-  let score = 50;
+function calculateAI(match){
+  let score = 45;
   let reasons = [];
 
   const odds = Number(match.odds || 0);
   const market = (match.market || "").toLowerCase();
   const league = (match.league || "").toLowerCase();
 
-  if (odds >= 1.40 && odds <= 1.80) {
-    score += 18;
-    reasons.push("stabil odds-tartomány");
-  } else if (odds > 1.80 && odds <= 2.30) {
+  if(odds >= 1.30 && odds <= 1.65){
     score += 14;
+    reasons.push("stabil odds");
+  }else if(odds > 1.65 && odds <= 2.15){
+    score += 22;
     reasons.push("jó value odds");
-  } else if (odds > 2.30 && odds <= 3.50) {
-    score += 6;
-    reasons.push("magasabb kockázatú odds");
-  } else {
+  }else if(odds > 2.15 && odds <= 3.20){
+    score += 10;
+    reasons.push("magasabb kockázat");
+  }else{
     score -= 8;
-    reasons.push("kockázatos odds");
+    reasons.push("gyenge odds-tartomány");
   }
 
-  if (market.includes("over") || market.includes("gól")) {
-    score += 8;
-    reasons.push("gólpiac");
+  if(market.includes("over") || market.includes("gól")){
+    score += 10;
+    reasons.push("gólos piac");
   }
 
-  if (market.includes("btts") || market.includes("mindkét")) {
-    score += 7;
+  if(market.includes("btts") || market.includes("mindkét")){
+    score += 9;
     reasons.push("BTTS piac");
   }
 
-  if (market.includes("lap")) {
-    score += 6;
+  if(market.includes("lap")){
+    score += 8;
     reasons.push("lapos piac");
   }
 
-  if (market.includes("szöglet")) {
-    score += 6;
+  if(market.includes("szöglet") || market.includes("corner")){
+    score += 8;
     reasons.push("szöglet piac");
   }
 
-  if (market.includes("les")) {
-    score += 5;
+  if(market.includes("les") || market.includes("offside")){
+    score += 6;
     reasons.push("les piac");
   }
 
-  if (
+  if(
     league.includes("premier") ||
     league.includes("serie") ||
-    league.includes("liga") ||
-    league.includes("bundesliga") ||
-    league.includes("nb")
-  ) {
-    score += 5;
-    reasons.push("ismert bajnokság");
+    league.includes("la liga") ||
+    league.includes("bundesliga")
+  ){
+    score += 7;
+    reasons.push("erős bajnokság");
   }
 
-  score = Math.max(1, Math.min(95, score));
+  if(league.includes("nb")){
+    score += 4;
+    reasons.push("magyar bajnokság");
+  }
+
+  score = Math.max(1, Math.min(98, score));
 
   let risk = "Magas";
-  if (score >= 85) risk = "Alacsony";
-  else if (score >= 70) risk = "Közepes";
+  if(score >= 85) risk = "Alacsony";
+  else if(score >= 70) risk = "Közepes";
 
-  let marketLabel = "Óvatosan kezelendő";
-  if (score >= 85) marketLabel = "Erős AI jel";
-  else if (score >= 75) marketLabel = "Value bet jelölt";
-  else if (score >= 65) marketLabel = "Közepes adatjel";
+  let label = "Gyenge jel";
+  if(score >= 88) label = "Nagyon erős AI jel";
+  else if(score >= 78) label = "Value bet jelölt";
+  else if(score >= 68) label = "Közepes adatjel";
 
   return {
     score,
-    market: marketLabel,
+    label,
     confidence: score + "%",
     risk,
     reasons: reasons.join(", ")
