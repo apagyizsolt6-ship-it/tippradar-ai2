@@ -1,138 +1,284 @@
+/* =====================================================
+   TippRadar AI v2.0 Mobile
+   style.css - 1/3
+===================================================== */
 
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+:root{
+    --bg:#07121a;
+    --card:#132033;
+    --card2:#1d2c42;
+    --green:#00d26a;
+    --green2:#00ff99;
+    --red:#ff4d4d;
+    --yellow:#ffc107;
+    --blue:#42a5f5;
+    --text:#ffffff;
+    --muted:#b8c2cc;
 }
 
 body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:#07121a;
-  color:#fff;
+    background:var(--bg);
+    color:var(--text);
+    padding-bottom:90px;
 }
 
 header{
-  background:#0b1722;
-  padding:20px;
-  text-align:center;
-  border-bottom:2px solid #00c853;
+    background:#0d1825;
+    padding:20px;
+    text-align:center;
+    border-bottom:3px solid var(--green);
 }
 
-h1{
-  color:#00ff99;
-  margin-bottom:8px;
+header h1{
+    color:var(--green2);
+    font-size:30px;
 }
 
 .version{
-  display:inline-block;
-  padding:6px 12px;
-  background:#00c853;
-  color:#fff;
-  border-radius:20px;
-  font-weight:bold;
-  margin-bottom:10px;
+    display:inline-block;
+    margin-top:10px;
+    padding:6px 14px;
+    border-radius:25px;
+    background:var(--green);
+    color:white;
+    font-weight:bold;
+}
+
+header p{
+    margin-top:10px;
+    color:var(--muted);
+    font-size:14px;
 }
 
 main{
-  padding:15px;
+    padding:15px;
 }
 
 .panel{
-  background:#132033;
-  border-radius:16px;
-  padding:15px;
-  margin-bottom:15px;
+    background:var(--card);
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:16px;
+    box-shadow:0 4px 10px rgba(0,0,0,.25);
 }
 
 .panel h2{
-  color:#00ff99;
-  margin-bottom:10px;
+    color:var(--green2);
+    margin-bottom:12px;
 }
 
 .hint{
-  color:#9ca3af;
-  margin-bottom:10px;
-  font-size:14px;
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:8px;
 }
 
 textarea,
-input{
-  width:100%;
-  background:#1f2937;
-  color:white;
-  border:none;
-  border-radius:10px;
-  padding:12px;
-  margin:10px 0;
-  font-size:15px;
+input,
+select{
+    width:100%;
+    background:#243446;
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    margin:10px 0;
+    font-size:15px;
 }
 
 textarea{
-  min-height:140px;
+    min-height:150px;
+    resize:vertical;
 }
 
 button{
-  width:100%;
-  padding:13px;
-  margin-top:8px;
-  border:none;
-  border-radius:10px;
-  background:#00c853;
-  color:white;
-  font-size:16px;
-  font-weight:bold;
-  cursor:pointer;
+    width:100%;
+    padding:14px;
+    margin-top:10px;
+    border:none;
+    border-radius:12px;
+    background:var(--green);
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.25s;
 }
 
 button:hover{
-  background:#00a848;
-}
-
-.card{
-  background:#132033;
-  border-radius:16px;
-  padding:15px;
-  margin-bottom:15px;
-}
-
-.league{
-  color:#00ff99;
-  font-size:14px;
-}
-
-.match{
-  font-size:22px;
-  font-weight:bold;
-  margin:10px 0;
-}
-
-.ai{
-  color:#00ff99;
-  font-weight:bold;
-  margin-top:10px;
-}
-
-.odd{
-  color:#4fc3f7;
+    background:#00b85b;
 }
 
 .hidden{
-  display:none;
+    display:none;
+}/* =====================================================
+   TippRadar AI v2.0 Mobile
+   style.css - 2/3
+===================================================== */
+
+#statsBox{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
 }
 
+.statBox{
+    background:var(--card2);
+    border-radius:14px;
+    padding:12px;
+    text-align:center;
+}
+
+.statBox b{
+    display:block;
+    color:var(--green2);
+    font-size:22px;
+}
+
+.statBox span{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.card{
+    background:var(--card);
+    border-radius:20px;
+    padding:16px;
+    margin-bottom:16px;
+    box-shadow:0 4px 12px rgba(0,0,0,.28);
+}
+
+.league{
+    color:var(--green2);
+    font-size:14px;
+    margin-bottom:6px;
+}
+
+.match{
+    font-size:23px;
+    font-weight:bold;
+    margin-bottom:12px;
+}
+
+.odd{
+    color:var(--blue);
+    font-weight:bold;
+}
+
+.ai{
+    color:var(--green2);
+    font-size:18px;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.small{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:8px;
+}
+
+.badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:bold;
+    margin:4px 4px 4px 0;
+}
+
+.badge-green{
+    background:#0f5132;
+    color:#bbf7d0;
+}
+
+.badge-yellow{
+    background:#7c5a00;
+    color:#fff3cd;
+}
+
+.badge-red{
+    background:#7f1d1d;
+    color:#fecaca;
+}
+
+.favoriteBtn{
+    background:#f5b301;
+    color:#111;
+}
+
+.ticketItem{
+    background:var(--card2);
+    border-radius:12px;
+    padding:12px;
+    margin:10px 0;
+}
+
+.ticketOdds{
+    color:var(--green2);
+    font-size:22px;
+    font-weight:bold;
+}/* =====================================================
+   TippRadar AI v2.0 Mobile
+   style.css - 3/3
+===================================================== */
+
 nav{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  display:flex;
-  background:#0b1722;
-  border-top:1px solid #1f2937;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:#0d1825;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    border-top:1px solid #223044;
+    z-index:10;
 }
 
 nav button{
-  flex:1;
-  border-radius:0;
-  margin:0;
-  background:#0b1722;
+    border-radius:0;
+    margin:0;
+    background:#0d1825;
+    font-size:13px;
+    padding:12px 4px;
+}
+
+nav button:hover{
+    background:#132033;
+}
+
+.card,
+.panel{
+    animation:fadeIn .25s ease-in-out;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(8px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+@media(max-width:420px){
+    header h1{
+        font-size:26px;
+    }
+
+    .match{
+        font-size:20px;
+    }
+
+    button{
+        font-size:15px;
+    }
+
+    #statsBox{
+        grid-template-columns:1fr;
+    }
 }
