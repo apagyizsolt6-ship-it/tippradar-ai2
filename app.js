@@ -1,9 +1,10 @@
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+let currentView = "all";
 
 function loadManualMatches() {
   const text = document.getElementById("matchInput").value.trim();
 
-  if (text === "") {
+  if (!text) {
     alert("Adj meg legalább egy meccset!");
     return;
   }
@@ -24,28 +25,44 @@ function loadManualMatches() {
     }
   });
 
+  currentView = "all";
   renderMatches();
 }
 
 function matchId(match) {
-  return match.league + "_" + match.home + "_" + match.away + "_" + match.odds;
+  return `${match.league}_${match.home}_${match.away}_${match.odds}_${match.market}`;
 }
 
 function toggleFavorite(id) {
-  if (favorites.includes(id)) {
-    favorites = favorites.filter(x => x !== id);
-  } else {
-    favorites.push(id);
-  }
+  favorites = favorites.includes(id)
+    ? favorites.filter(x => x !== id)
+    : [...favorites, id];
 
   localStorage.setItem("favorites", JSON.stringify(favorites));
   renderMatches();
 }
 
-function getRisk(score) {
-  if (score >= 85) return "Alacsony";
-  if (score >= 70) return "Közepes";
-  return "Magas";
+function getFilteredMatches() {
+  const q = document.getElementById("searchInput").value.toLowerCase();
+
+  let list = [...matches];
+
+  if (currentView === "top") {
+    list = list
+      .sort((a, b) => calculateAI(b).score - calculateAI(a).score)
+      .slice(0, 10);
+  }
+
+  if (currentView === "favorites") {
+    list = list.filter(m => favorites.includes(matchId(m)));
+  }
+
+  return list.filter(m =>
+    m.home.toLowerCase().includes(q) ||
+    m.away.toLowerCase().includes(q) ||
+    m.league.toLowerCase().includes(q) ||
+    (m.market || "").toLowerCase().includes(q)
+  );
 }
 
 function renderCard(match) {
@@ -64,7 +81,8 @@ function renderCard(match) {
       <p class="ai">🤖 AI pont: ${ai.score}/100</p>
       <p><b>Ajánlás:</b> ${ai.market}</p>
       <p><b>Confidence:</b> ${ai.confidence}</p>
-      <p><b>Kockázat:</b> ${getRisk(ai.score)}</p>
+      <p><b>Kockázat:</b> ${ai.risk}</p>
+      <p class="small"><b>Indoklás:</b> ${ai.reasons}</p>
 
       <button onclick="toggleFavorite('${id}')">
         ${saved ? "⭐ Mentve" : "☆ Kedvenchez adás"}
@@ -73,60 +91,40 @@ function renderCard(match) {
   `;
 }
 
-function getFilteredMatches() {
-  const q = document.getElementById("searchInput").value.toLowerCase();
-
-  return matches.filter(m =>
-    m.home.toLowerCase().includes(q) ||
-    m.away.toLowerCase().includes(q) ||
-    m.league.toLowerCase().includes(q) ||
-    (m.market && m.market.toLowerCase().includes(q))
-  );
-}
-
 function renderMatches() {
   const list = document.getElementById("matches");
-  list.innerHTML = "";
+  const filtered = getFilteredMatches();
 
-  getFilteredMatches().forEach(match => {
-    list.innerHTML += renderCard(match);
-  });
+  if (!filtered.length) {
+    list.innerHTML = "<div class='card'>Nincs találat.</div>";
+    return;
+  }
+
+  list.innerHTML = filtered.map(renderCard).join("");
 }
 
 function showTop() {
-  const list = document.getElementById("matches");
-  list.innerHTML = "";
-
-  [...matches]
-    .sort((a, b) => calculateAI(b).score - calculateAI(a).score)
-    .slice(0, 10)
-    .forEach(match => {
-      list.innerHTML += renderCard(match);
-    });
+  currentView = "top";
+  renderMatches();
 }
 
 function showFavorites() {
-  const list = document.getElementById("matches");
-  list.innerHTML = "";
-
-  matches
-    .filter(m => favorites.includes(matchId(m)))
-    .forEach(match => {
-      list.innerHTML += renderCard(match);
-    });
-
-  if (list.innerHTML === "") {
-    list.innerHTML = "<div class='card'>Még nincs kedvenc meccsed.</div>";
-  }
+  currentView = "favorites";
+  renderMatches();
 }
 
-function buildTicket() {
-  let top = [...matches]
-    .sort((a, b) => calculateAI(b).score - calculateAI(a).score)
-    .slice(0, 3);
+function buildTicket(type = "safe") {
+  let count = 3;
 
-  let html = "<h2>🧾 AI szelvény</h2>";
+  if (type === "medium") count = 5;
+  if (type === "high") count = 8;
+
+  const top = [...matches]
+    .sort((a, b) => calculateAI(b).score - calculateAI(a).score)
+    .slice(0, count);
+
   let odds = 1;
+  let html = `<h2>🧾 AI szelvény</h2>`;
 
   top.forEach(m => {
     odds *= m.odds;
@@ -144,11 +142,12 @@ function buildTicket() {
 
   html += `
     <p><b>Össz odds:</b> ${odds.toFixed(2)}</p>
-    <p class="small">Ez nem biztos tipp, csak AI alapú szelvényjavaslat.</p>
+    <p class="small">Ez nem biztos tipp, hanem döntéstámogató AI-javaslat.</p>
   `;
 
-  document.getElementById("ticketBox").classList.remove("hidden");
-  document.getElementById("ticketBox").innerHTML = html;
+  const box = document.getElementById("ticketBox");
+  box.classList.remove("hidden");
+  box.innerHTML = html;
 }
 
 renderMatches();
