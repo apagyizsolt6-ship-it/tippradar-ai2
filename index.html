@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TippRadar AI v2.0 Mobile</title>
+  <title>TippRadar AI v3.0 PRO</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,27 +11,31 @@
 
 <header>
   <h1>⚽ TippRadar AI</h1>
-  <div class="version">v2.0 MOBILE</div>
-  <p>Valódi kézi meccsimport • AI elemzés • Szelvényépítő</p>
+  <div class="version">v3.0 PRO</div>
+  <p>AI szelvényépítő • Bankroll • Tippnapló</p>
 </header>
 
 <main>
 
   <section class="panel">
     <h2>📥 Meccsek importálása</h2>
-    <p class="hint">Formátum:</p>
-    <p <p class="hint">Egyszerű forma: Hazai - Vendég | Odds | Piac</p>
-<p class="hint">Részletes forma: Liga | Hazai | Vendég | Odds | Piac</p>
-<textarea id="matchInput" placeholder="Roma - Lazio | 1.82 | Lap Over&#10;Barcelona - Valencia | 1.67 | Over 2.5&#10;Liverpool - Arsenal | 1.74 | BTTS"></textarea>
+    <p class="hint">Egyszerű forma: Hazai - Vendég | Odds | Piac</p>
+    <p class="hint">Részletes forma: Liga | Hazai | Vendég | Odds | Piac</p>
+
+    <textarea id="matchInput" placeholder="Roma - Lazio | 1.82 | Lap Over&#10;Barcelona - Valencia | 1.67 | Over 2.5&#10;Liverpool - Arsenal | 1.74 | BTTS"></textarea>
+
+    <button onclick="loadManualMatches()">Meccsek betöltése</button>
   </section>
 
   <section class="panel">
     <input id="searchInput" placeholder="Keresés csapatra, ligára vagy piacra..." oninput="renderMatches()">
 
+    <input id="bankrollInput" type="number" placeholder="Teljes bankroll Ft-ban, pl. 50000">
+    <input id="stakeInput" type="number" placeholder="Tét Ft-ban, pl. 1000">
+
     <button onclick="showAll()">🏠 Összes meccs</button>
     <button onclick="showTop()">🔥 Top AI lista</button>
     <button onclick="showFavorites()">⭐ Kedvencek</button>
-    <input id="stakeInput" type="number" placeholder="Tét Ft-ban, pl. 1000">
     <button onclick="buildTicket('safe')">🧾 Biztonságos szelvény</button>
     <button onclick="buildTicket('value')">🎯 Value szelvény</button>
     <button onclick="buildTicket('high')">🚀 Magas odds szelvény</button>
@@ -40,6 +44,13 @@
   <section id="statsBox" class="panel"></section>
 
   <section id="ticketBox" class="panel hidden"></section>
+
+  <section id="journalBox" class="panel">
+    <h2>📓 Tippnapló</h2>
+    <button onclick="showJournal()">Mentett szelvények mutatása</button>
+    <button onclick="clearJournal()">Tippnapló törlése</button>
+    <div id="journalList"></div>
+  </section>
 
   <section id="matches"></section>
 
