@@ -202,7 +202,9 @@ function buildTicket(mode = "safe"){
   const box = document.getElementById("ticketBox");
   box.classList.remove("hidden");
 
-  if(!selected.length){
+  if(!selected.length){html += `
+  <button onclick="copyTicket()">📋 Szelvény másolása</button>
+`;
     box.innerHTML = "<h2>🧾 AI szelvény</h2><p>Nincs elég erős meccs ehhez a szelvénytípushoz.</p>";
     return;
   }
