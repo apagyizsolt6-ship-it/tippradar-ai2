@@ -98,6 +98,8 @@ function renderStats(){
   const avg = total
     ? Math.round(matches.reduce((sum,m)=>sum + calculateAI(m).score,0) / total)
     : 0;
+html += `
+  <button onclick="copyTicket()">📋 Szelvény másolása</button>
 
   box.innerHTML = `
     <div class="statBox"><b>${total}</b><span>Meccs</span></div>
@@ -236,4 +238,8 @@ function buildTicket(mode = "safe"){
   box.innerHTML = html;
 }
 
-renderMatches();
+renderMatches();function copyTicket(){
+  const text = document.getElementById("ticketBox").innerText;
+  navigator.clipboard.writeText(text);
+  alert("Szelvény kimásolva!");
+}
