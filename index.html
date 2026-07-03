@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TippRadar AI v0.6 Ultimate</title>
+<title>TippRadar AI v0.7 Smart Data</title>
 
 <style>
 *{box-sizing:border-box}
@@ -29,18 +29,18 @@ header{
 h1{
   margin:0;
   color:#00ff99;
-  font-size:31px;
+  font-size:30px;
 }
 
 .version{
   display:inline-block;
-  background:#052e1a;
-  color:#00ff99;
+  margin-top:8px;
   padding:5px 12px;
   border-radius:999px;
-  font-size:13px;
-  margin-top:8px;
   border:1px solid #00c853;
+  background:#052e1a;
+  color:#00ff99;
+  font-size:13px;
 }
 
 .subtitle{
@@ -88,110 +88,95 @@ h1{
   color:#9ca3af;
   font-size:12px;
 }.tabs{
-display:flex;
-gap:10px;
-overflow:auto;
-margin-bottom:15px;
+  display:flex;
+  gap:10px;
+  overflow:auto;
+  margin-bottom:15px;
 }
 
 .tab{
-background:#1e293b;
-padding:10px 18px;
-border-radius:30px;
-white-space:nowrap;
-font-weight:bold;
+  background:#1e293b;
+  padding:11px 18px;
+  border-radius:30px;
+  white-space:nowrap;
+  font-weight:bold;
 }
 
 .tab.active{
-background:#00c853;
-color:white;
+  background:#00c853;
 }
 
 select{
-width:100%;
-padding:14px;
-border-radius:14px;
-background:#1e293b;
-color:white;
-border:none;
-margin-bottom:18px;
-font-size:15px;
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  background:#1e293b;
+  color:white;
+  border:0;
+  margin-bottom:18px;
+  font-size:15px;
 }
 
 .card{
-background:#142033;
-border-radius:20px;
-padding:18px;
-margin-bottom:22px;
-box-shadow:0 0 15px rgba(0,255,120,.08);
-}
-
-.live{
-display:inline-block;
-background:#7f1d1d;
-padding:6px 10px;
-border-radius:20px;
-font-size:12px;
-margin-bottom:10px;
+  background:#142033;
+  border-radius:20px;
+  padding:18px;
+  margin-bottom:20px;
+  box-shadow:0 0 15px rgba(0,255,120,.08);
 }
 
 .league{
-color:#00ff99;
-margin-bottom:8px;
+  color:#00ff99;
+  margin-bottom:8px;
 }
 
 .match{
-font-size:34px;
-font-weight:bold;
-margin-bottom:18px;
+  font-size:30px;
+  font-weight:bold;
+  margin-bottom:16px;
 }
 
 .grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:12px;
-margin-bottom:18px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:18px;
 }
 
 .box{
-background:#0b1722;
-padding:14px;
-border-radius:14px;
-text-align:center;
+  background:#0b1722;
+  padding:13px;
+  border-radius:14px;
+  text-align:center;
 }
 
 .box span{
-display:block;
-color:#9ca3af;
-font-size:13px;
-margin-bottom:6px;
+  display:block;
+  color:#9ca3af;
+  font-size:12px;
+  margin-bottom:6px;
 }
 
 .box b{
-font-size:18px;
-color:#00ff99;
+  font-size:18px;
+  color:#00ff99;
 }
 
 .tip{
-background:#06361d;
-border:1px solid #00c853;
-border-radius:16px;
-padding:15px;
-margin-top:12px;
-}
-
-.tip h3{
-margin-top:0;
-color:#00ff99;
-}
-
-.badge{
+  background:#06361d;
+  border:1px solid #00c853;
+  border-radius:16px;
+  padding:15px;
+  margin-top:12px;
+  line-height:1.45;
+}.badge{
 display:inline-block;
-padding:5px 10px;
+padding:6px 10px;
 border-radius:20px;
 font-size:12px;
 margin-right:8px;
 margin-top:8px;
+font-weight:bold;
 }
 
 .green{
@@ -204,7 +189,9 @@ background:#7c4a03;
 
 .blue{
 background:#0d47a1;
-}.favorite{
+}
+
+.favorite{
 width:100%;
 margin-top:15px;
 padding:14px;
@@ -249,17 +236,30 @@ border:none;
 border-radius:14px;
 font-size:17px;
 font-weight:bold;
+cursor:pointer;
 }
 
 .result{
-margin-top:14px;
+margin-top:15px;
 padding:14px;
 border-radius:14px;
 background:#06361d;
 border:1px solid #00c853;
 }
 
-nav{
+.live{
+display:inline-block;
+background:#7f1d1d;
+padding:6px 10px;
+border-radius:20px;
+font-size:12px;
+margin-bottom:10px;
+color:white;
+}
+
+.hidden{
+display:none;
+}nav{
 position:fixed;
 bottom:0;
 left:0;
@@ -275,6 +275,7 @@ nav div{
 text-align:center;
 font-size:13px;
 color:white;
+cursor:pointer;
 }
 
 .footer{
@@ -293,90 +294,88 @@ font-size:13px;
 
 <h1>⚽ TippRadar AI</h1>
 
-<div class="version">v0.6 ULTIMATE</div>
+<div class="version">v0.7 SMART DATA</div>
 
 <div class="subtitle">
-AI sportelemző • Ultimate Edition
+AI sportelemző • Smart Data Edition
 </div>
 
 </header>
 
 <div class="wrap">
 
-<input class="search"
-placeholder="Csapat, bajnokság vagy piac keresése...">
+<input
+id="search"
+class="search"
+placeholder="Keress csapatra vagy bajnokságra..."
+onkeyup="filterMatches()">
 
 <div class="stats">
 
 <div class="stat">
-<b>31</b>
+<b>48</b>
 <span>Mai meccs</span>
 </div>
 
 <div class="stat">
-<b>12</b>
-<span>Top tipp</span>
+<b>18</b>
+<span>Top AI Tipp</span>
 </div>
 
 <div class="stat">
-<b>96%</b>
-<span>AI átlag</span>
+<b>97%</b>
+<span>AI pontosság</span>
 </div>
 
 </div>
 
 <div class="tabs">
-
 <div class="tab active">🏠 Mai</div>
-
 <div class="tab">🔥 Top</div>
-
-<div class="tab">⭐ Kedvenc</div>
-
+<div class="tab">⭐ Kedvencek</div>
+<div class="tab">🧾 Szelvény</div>
 <div class="tab">🔴 Élő</div>
-
 <div class="tab">👤 Profil</div>
-
 </div>
 
 <select>
-
 <option>Minden liga</option>
-
 <option>Premier League</option>
-
 <option>Serie A</option>
-
 <option>La Liga</option>
-
 <option>Bundesliga</option>
-
 <option>NB I</option>
-
-</select><div class="builder">
-<h2>🧾 AI szelvényépítő</h2>
-<p>Válassz szelvénytípust, és a rendszer javaslatot ad.</p>
-
-<select id="ticketType">
-<option>Biztonságos 2–3 meccses</option>
-<option>Közepes 4–6 meccses</option>
-<option>Magas odds 8+ meccses</option>
 </select>
 
-<input id="stake" type="number" placeholder="Tét Ft-ban">
+<div class="builder">
 
-<button onclick="buildTicket()">Szelvény javaslat készítése</button>
+<h2>🧾 AI Szelvényépítő</h2>
+
+<select id="ticketType">
+<option>Biztonságos</option>
+<option>Közepes</option>
+<option>Magas odds</option>
+</select>
+
+<input
+id="stake"
+type="number"
+placeholder="Tét (Ft)">
+
+<button onclick="buildTicket()">
+AI szelvény készítése
+</button>
 
 <div id="ticketResult" class="result">
-Itt jelenik meg az AI szelvényjavaslat.
-</div>
+Itt jelenik meg az AI ajánlás.
 </div>
 
-<div class="card">
-<div class="live">🔴 ÉLŐ AI AJÁNLAT</div>
-<div class="league">Olaszország • Serie A</div>
+</div>
+
+<div id="matches"><div class="card matchCard">
+<div class="live">🔴 ÉLŐ AI JEL</div>
+<div class="league">Serie A</div>
 <div class="match">Roma – Lazio</div>
-
 <div class="grid">
 <div class="box"><span>Goal</span><b>66</b></div>
 <div class="box"><span>BTTS</span><b>70</b></div>
@@ -385,24 +384,19 @@ Itt jelenik meg az AI szelvényjavaslat.
 <div class="box"><span>Offside</span><b>58</b></div>
 <div class="box"><span>AI Safe</span><b>94</b></div>
 </div>
-
 <div class="tip">
-<h3>🤖 Ultimate AI ajánlás</h3>
-<p><b>Ajánlott piac:</b> Lap Over</p>
-<p><b>Odds:</b> 1.82</p>
+<b>Ajánlott piac:</b> Lap Over<br>
+<b>Odds:</b> 1.82<br>
 <span class="badge green">Value bet</span>
-<span class="badge orange">Alacsony kockázat</span>
 <span class="badge blue">Confidence 94%</span>
-<p>A modell szerint a lapos piac emelkedik ki. Ez nem biztos tipp, hanem döntéstámogató statisztikai jelzés.</p>
+<p>A modell szerint a lapos piac a legerősebb adatjel.</p>
+</div>
+<button class="favorite">⭐ Kedvenchez adás</button>
 </div>
 
-<button class="favorite">⭐ Kedvencekhez adás</button>
-</div>
-
-<div class="card">
-<div class="league">Spanyolország • La Liga</div>
+<div class="card matchCard">
+<div class="league">La Liga</div>
 <div class="match">Barcelona – Valencia</div>
-
 <div class="grid">
 <div class="box"><span>Goal</span><b>89</b></div>
 <div class="box"><span>BTTS</span><b>82</b></div>
@@ -411,23 +405,18 @@ Itt jelenik meg az AI szelvényjavaslat.
 <div class="box"><span>Offside</span><b>55</b></div>
 <div class="box"><span>AI Safe</span><b>88</b></div>
 </div>
-
 <div class="tip">
-<h3>⚽ AI ajánlás</h3>
-<p><b>Ajánlott piac:</b> Over 2.5 gól</p>
-<p><b>Odds:</b> 1.67</p>
+<b>Ajánlott piac:</b> Over 2.5<br>
+<b>Odds:</b> 1.67<br>
 <span class="badge green">Erős adatjel</span>
-<span class="badge blue">Confidence 88%</span>
 <p>A gólpiac statisztikai oldalon erős jelzést ad.</p>
 </div>
-
-<button class="favorite">⭐ Kedvencekhez adás</button>
+<button class="favorite">⭐ Kedvenchez adás</button>
 </div>
 
-<div class="card">
-<div class="league">Anglia • Premier League</div>
+<div class="card matchCard">
+<div class="league">Premier League</div>
 <div class="match">Liverpool – Arsenal</div>
-
 <div class="grid">
 <div class="box"><span>Goal</span><b>84</b></div>
 <div class="box"><span>BTTS</span><b>86</b></div>
@@ -436,21 +425,19 @@ Itt jelenik meg az AI szelvényjavaslat.
 <div class="box"><span>Offside</span><b>62</b></div>
 <div class="box"><span>AI Safe</span><b>90</b></div>
 </div>
-
 <div class="tip">
-<h3>🎯 AI ajánlás</h3>
-<p><b>Ajánlott piac:</b> BTTS</p>
-<p><b>Odds:</b> 1.74</p>
+<b>Ajánlott piac:</b> BTTS<br>
+<b>Odds:</b> 1.74<br>
 <span class="badge green">Value bet</span>
-<span class="badge blue">Confidence 90%</span>
 <p>Mindkét csapat támadó mutatói alapján a BTTS piac kiemelkedik.</p>
 </div>
+<button class="favorite">⭐ Kedvenchez adás</button>
+</div>
 
-<button class="favorite">⭐ Kedvencekhez adás</button>
 </div>
 
 <div class="footer">
-A TippRadar AI elemzései tájékoztató jellegűek. A sportfogadás kockázattal jár.
+A TippRadar AI tájékoztató jellegű. A sportfogadás kockázattal jár.
 </div>
 
 </div>
@@ -458,24 +445,31 @@ A TippRadar AI elemzései tájékoztató jellegűek. A sportfogadás kockázatta
 <nav>
 <div>🏠<br>Mai</div>
 <div>🔥<br>Top</div>
+<div>⭐<br>Kedvenc</div>
 <div>🧾<br>Szelvény</div>
-<div>🔴<br>Élő</div>
 <div>👤<br>Profil</div>
 </nav>
 
 <script>
+function filterMatches(){
+  let q=document.getElementById("search").value.toLowerCase();
+  document.querySelectorAll(".matchCard").forEach(card=>{
+    card.style.display=card.innerText.toLowerCase().includes(q)?"block":"none";
+  });
+}
+
 function buildTicket(){
-  const type=document.getElementById("ticketType").value;
-  const stake=document.getElementById("stake").value || 0;
+  let type=document.getElementById("ticketType").value;
+  let stake=Number(document.getElementById("stake").value || 0);
+  let odds= type==="Biztonságos" ? 3.05 : type==="Közepes" ? 5.29 : 12.40;
   document.getElementById("ticketResult").innerHTML =
-  "<b>AI javaslat:</b><br>" +
-  type + "<br><br>" +
-  "1. Roma – Lazio: Lap Over<br>" +
-  "2. Barcelona – Valencia: Over 2.5<br>" +
-  "3. Liverpool – Arsenal: BTTS<br><br>" +
-  "Becsült kombinált odds: <b>5.29</b><br>" +
-  "Megadott tét: <b>" + stake + " Ft</b><br>" +
-  "Lehetséges nyeremény becslés: <b>" + Math.round(stake*5.29) + " Ft</b>";
+  "<b>AI szelvény:</b><br>" +
+  "Roma – Lazio: Lap Over<br>" +
+  "Barcelona – Valencia: Over 2.5<br>" +
+  "Liverpool – Arsenal: BTTS<br><br>" +
+  "Típus: <b>"+type+"</b><br>" +
+  "Becsült odds: <b>"+odds+"</b><br>" +
+  "Lehetséges nyeremény: <b>"+Math.round(stake*odds)+" Ft</b>";
 }
 </script>
 
