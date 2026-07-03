@@ -1,29 +1,28 @@
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 let currentView = "all";
-let ticketMode = "safe";
 
-function loadManualMatches() {
+function loadManualMatches(){
   const text = document.getElementById("matchInput").value.trim();
 
-  if (!text) {
+  if(!text){
     alert("Adj meg legalább egy meccset!");
     return;
   }
 
   matches = [];
 
-  text.split("\n").forEach(line => {
+  text.split("\n").forEach(line=>{
     const p = line.split("|");
 
-    if (p.length >= 4) {
-      const odds = parseFloat(p[3].replace(",", "."));
+    if(p.length >= 4){
+      const odds = parseFloat(p[3].trim().replace(",", "."));
 
-      if (!isNaN(odds)) {
+      if(!isNaN(odds)){
         matches.push({
           league: p[0].trim(),
           home: p[1].trim(),
           away: p[2].trim(),
-          odds,
+          odds: odds,
           market: p[4] ? p[4].trim() : "Alap piac"
         });
       }
@@ -35,11 +34,11 @@ function loadManualMatches() {
   renderMatches();
 }
 
-function matchId(match) {
+function matchId(match){
   return `${match.league}_${match.home}_${match.away}_${match.odds}_${match.market}`;
 }
 
-function toggleFavorite(id) {
+function toggleFavorite(id){
   favorites = favorites.includes(id)
     ? favorites.filter(x => x !== id)
     : [...favorites, id];
@@ -48,18 +47,17 @@ function toggleFavorite(id) {
   renderMatches();
 }
 
-function getFilteredMatches() {
+function getFilteredMatches(){
   const q = (document.getElementById("searchInput").value || "").toLowerCase();
-
   let list = [...matches];
 
-  if (currentView === "top") {
+  if(currentView === "top"){
     list = list
-      .sort((a, b) => calculateAI(b).score - calculateAI(a).score)
-      .slice(0, 10);
+      .sort((a,b)=>calculateAI(b).score - calculateAI(a).score)
+      .slice(0,10);
   }
 
-  if (currentView === "favorites") {
+  if(currentView === "favorites"){
     list = list.filter(m => favorites.includes(matchId(m)));
   }
 
@@ -71,7 +69,39 @@ function getFilteredMatches() {
   );
 }
 
-function renderCard(match) {
+function renderStats(){
+  const box = document.getElementById("statsBox");
+  if(!box) return;
+
+  const total = matches.length;
+  const topCount = matches.filter(m => calculateAI(m).score >= 78).length;
+  const avg = total
+    ? Math.round(matches.reduce((sum,m)=>sum + calculateAI(m).score,0) / total)
+    : 0;
+
+  box.innerHTML = `
+    <div class="statBox">
+      <b>${total}</b>
+      <span>Meccs</span>
+    </div>
+    <div class="statBox">
+      <b>${topCount}</b>
+      <span>Top AI</span>
+    </div>
+    <div class="statBox">
+      <b>${avg}%</b>
+      <span>Átlag AI</span>
+    </div>
+  `;
+}
+
+function badgeByRisk(risk){
+  if(risk === "Alacsony") return "badge-green";
+  if(risk === "Közepes") return "badge-yellow";
+  return "badge-red";
+}
+
+function renderCard(match){
   const ai = calculateAI(match);
   const id = matchId(match);
   const saved = favorites.includes(id);
@@ -85,23 +115,27 @@ function renderCard(match) {
       <p><b>Odds:</b> <span class="odd">${match.odds}</span></p>
 
       <p class="ai">🤖 AI pont: ${ai.score}/100</p>
-      <p><b>Ajánlás:</b> ${ai.market}</p>
-      <p><b>Confidence:</b> ${ai.confidence}</p>
-      <p><b>Kockázat:</b> ${ai.risk}</p>
+
+      <span class="badge ${badgeByRisk(ai.risk)}">${ai.risk} kockázat</span>
+      <span class="badge badge-green">${ai.confidence} confidence</span>
+
+      <p><b>Ajánlás:</b> ${ai.label}</p>
       <p class="small"><b>Indoklás:</b> ${ai.reasons}</p>
 
-      <button onclick="toggleFavorite('${id}')">
+      <button class="favoriteBtn" onclick="toggleFavorite('${id}')">
         ${saved ? "⭐ Mentve" : "☆ Kedvenchez adás"}
       </button>
     </div>
   `;
 }
 
-function renderMatches() {
+function renderMatches(){
+  renderStats();
+
   const list = document.getElementById("matches");
   const filtered = getFilteredMatches();
 
-  if (!filtered.length) {
+  if(!filtered.length){
     list.innerHTML = "<div class='card'>Nincs találat.</div>";
     return;
   }
@@ -109,95 +143,95 @@ function renderMatches() {
   list.innerHTML = filtered.map(renderCard).join("");
 }
 
-function showTop() {
-  currentView = "top";
-  hideTicket();
-  renderMatches();
-}
-
-function showFavorites() {
-  currentView = "favorites";
-  hideTicket();
-  renderMatches();
-}
-
-function showAll() {
+function showAll(){
   currentView = "all";
   hideTicket();
   renderMatches();
 }
 
-function hideTicket() {
+function showTop(){
+  currentView = "top";
+  hideTicket();
+  renderMatches();
+}
+
+function showFavorites(){
+  currentView = "favorites";
+  hideTicket();
+  renderMatches();
+}
+
+function hideTicket(){
   const box = document.getElementById("ticketBox");
-  if (box) {
+  if(box){
     box.classList.add("hidden");
     box.innerHTML = "";
   }
 }
 
-function buildTicket(mode = "safe") {
-  ticketMode = mode;
-
+function buildTicket(mode = "safe"){
   let count = 3;
   let minScore = 70;
 
-  if (mode === "value") {
+  if(mode === "value"){
     count = 4;
-    minScore = 75;
+    minScore = 78;
   }
 
-  if (mode === "high") {
+  if(mode === "high"){
     count = 6;
     minScore = 65;
   }
 
   const selected = [...matches]
     .filter(m => calculateAI(m).score >= minScore)
-    .sort((a, b) => calculateAI(b).score - calculateAI(a).score)
-    .slice(0, count);
+    .sort((a,b)=>calculateAI(b).score - calculateAI(a).score)
+    .slice(0,count);
 
-  if (!selected.length) {
-    document.getElementById("ticketBox").classList.remove("hidden");
-    document.getElementById("ticketBox").innerHTML =
-      "<h2>🧾 AI szelvény</h2><p>Nincs elég erős meccs a szelvényhez.</p>";
+  const box = document.getElementById("ticketBox");
+  box.classList.remove("hidden");
+
+  if(!selected.length){
+    box.innerHTML = `
+      <h2>🧾 AI szelvény</h2>
+      <p>Nincs elég erős meccs ehhez a szelvénytípushoz.</p>
+    `;
     return;
   }
 
   let odds = 1;
   let html = `<h2>🧾 AI szelvény</h2>`;
 
-  html += `
-    <p>
-      <button onclick="buildTicket('safe')">Biztonságos</button>
-      <button onclick="buildTicket('value')">Value</button>
-      <button onclick="buildTicket('high')">Magas odds</button>
-    </p>
-  `;
-
-  selected.forEach(m => {
+  selected.forEach(m=>{
     odds *= m.odds;
     const ai = calculateAI(m);
 
     html += `
-      <p>
+      <div class="ticketItem">
         <b>${m.home} - ${m.away}</b><br>
         Liga: ${m.league}<br>
         Piac: ${m.market}<br>
         Odds: ${m.odds}<br>
-        AI: ${ai.score}/100<br>
-        Kockázat: ${ai.risk}
-      </p>
+        AI: ${ai.score}/100
+      </div>
     `;
   });
 
   html += `
-    <p><b>Szelvény típusa:</b> ${mode === "safe" ? "Biztonságos" : mode === "value" ? "Value" : "Magas odds"}</p>
-    <p><b>Össz odds:</b> ${odds.toFixed(2)}</p>
-    <p class="small">Ez nem biztos tipp, hanem döntéstámogató AI-javaslat.</p>
+    <p><b>Szelvény típusa:</b> ${
+      mode === "safe" ? "Biztonságos" :
+      mode === "value" ? "Value" :
+      "Magas odds"
+    }</p>
+
+    <p>Össz odds:</p>
+    <div class="ticketOdds">${odds.toFixed(2)}</div>
+
+    <p class="small">
+      Ez nem biztos tipp, hanem döntéstámogató AI-javaslat.
+    </p>
   `;
 
-  const box = document.getElementById("ticketBox");
-  box.classList.remove("hidden");
   box.innerHTML = html;
 }
 
