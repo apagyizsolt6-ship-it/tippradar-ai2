@@ -1,28 +1,29 @@
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+let journal = JSON.parse(localStorage.getItem("tipJournal") || "[]");
 let currentView = "all";
+let lastTicketText = "";
 
 function parseMatchLine(line){
   const p = line.split("|").map(x => x.trim()).filter(Boolean);
 
   if(p.length >= 5){
     return {
-      league: p[0],
-      home: p[1],
-      away: p[2],
-      odds: parseFloat(p[3].replace(",", ".")),
-      market: p[4]
+      league:p[0],
+      home:p[1],
+      away:p[2],
+      odds:parseFloat(p[3].replace(",", ".")),
+      market:p[4]
     };
   }
 
   if(p.length >= 3 && p[0].includes("-")){
     const teams = p[0].split("-").map(x => x.trim());
-
     return {
-      league: "Kézi import",
-      home: teams[0],
-      away: teams[1],
-      odds: parseFloat(p[1].replace(",", ".")),
-      market: p[2]
+      league:"Kézi import",
+      home:teams[0],
+      away:teams[1],
+      odds:parseFloat(p[1].replace(",", ".")),
+      market:p[2]
     };
   }
 
@@ -54,11 +55,9 @@ function loadManualMatches(){
   hideTicket();
   renderMatches();
 
-  alert(
-    errors.length
-      ? `Betöltve: ${matches.length} meccs. Hibás sorok: ${errors.join(", ")}`
-      : `Sikeres import: ${matches.length} meccs.`
-  );
+  alert(errors.length
+    ? `Betöltve: ${matches.length} meccs. Hibás sorok: ${errors.join(", ")}`
+    : `Sikeres import: ${matches.length} meccs.`);
 }
 
 function matchId(match){
@@ -99,7 +98,8 @@ function renderStats(){
   if(!box) return;
 
   const total = matches.length;
-  const topCount = matches.filter(m => calculateAI(m).score >= 78).length;
+  const topCount = matches.filter(m => calculateAI(m).score >= 80).length;
+  const favCount = favorites.length;
   const avg = total
     ? Math.round(matches.reduce((sum,m)=>sum + calculateAI(m).score,0) / total)
     : 0;
@@ -108,6 +108,7 @@ function renderStats(){
     <div class="statBox"><b>${total}</b><span>Meccs</span></div>
     <div class="statBox"><b>${topCount}</b><span>Top AI</span></div>
     <div class="statBox"><b>${avg}%</b><span>Átlag AI</span></div>
+    <div class="statBox"><b>${favCount}</b><span>Kedvenc</span></div>
   `;
 }
 
@@ -180,15 +181,31 @@ function showFavorites(){
 function hideTicket(){
   const box = document.getElementById("ticketBox");
   if(!box) return;
-
   box.classList.add("hidden");
   box.innerHTML = "";
 }
 
 function getTicketSettings(mode){
-  if(mode === "value") return { count:4, minScore:78, name:"Value" };
+  if(mode === "value") return { count:4, minScore:80, name:"Value" };
   if(mode === "high") return { count:6, minScore:65, name:"Magas odds" };
-  return { count:3, minScore:70, name:"Biztonságos" };
+  return { count:3, minScore:72, name:"Biztonságos" };
+}
+
+function ticketRisk(avgScore, odds){
+  if(avgScore >= 86 && odds <= 6) return "Alacsony";
+  if(avgScore >= 75 && odds <= 15) return "Közepes";
+  return "Magas";
+}
+
+function bankrollAdvice(stake){
+  const bankroll = Number(document.getElementById("bankrollInput")?.value || 0);
+  if(!bankroll || !stake) return "Nincs bankroll-adat.";
+
+  const percent = (stake / bankroll) * 100;
+
+  if(percent <= 2) return `Óvatos tét (${percent.toFixed(1)}% bankroll).`;
+  if(percent <= 5) return `Közepes tét (${percent.toFixed(1)}% bankroll).`;
+  return `Magas kockázatú tét (${percent.toFixed(1)}% bankroll).`;
 }
 
 function buildTicket(mode = "safe"){
@@ -211,11 +228,16 @@ function buildTicket(mode = "safe"){
   }
 
   let odds = 1;
+  let avgScore = 0;
+  let text = `AI szelvény - ${settings.name}\n\n`;
   let html = `<h2>🧾 AI szelvény</h2>`;
 
   selected.forEach(m=>{
     odds *= m.odds;
     const ai = calculateAI(m);
+    avgScore += ai.score;
+
+    text += `${m.home} - ${m.away} | ${m.odds} | ${m.market} | AI ${ai.score}/100\n`;
 
     html += `
       <div class="ticketItem">
@@ -228,17 +250,33 @@ function buildTicket(mode = "safe"){
     `;
   });
 
+  avgScore = Math.round(avgScore / selected.length);
+
   const stake = Number(document.getElementById("stakeInput")?.value || 0);
   const win = Math.round(stake * odds);
+  const risk = ticketRisk(avgScore, odds);
+  const advice = bankrollAdvice(stake);
+
+  text += `\nÖssz odds: ${odds.toFixed(2)}\nTét: ${stake} Ft\nVárható nyeremény: ${win} Ft\nKockázat: ${risk}`;
+
+  lastTicketText = text;
 
   html += `
     <p><b>Szelvény típusa:</b> ${settings.name}</p>
+    <p><b>Átlag AI:</b> ${avgScore}/100</p>
+    <p><b>Kockázat:</b> ${risk}</p>
+    <p><b>Bankroll:</b> ${advice}</p>
+
     <p><b>Össz odds:</b></p>
     <div class="ticketOdds">${odds.toFixed(2)}</div>
+
     <p><b>Tét:</b> ${stake} Ft</p>
     <p><b>Várható nyeremény:</b> ${win} Ft</p>
+
     <p class="small">Ez nem biztos tipp, hanem döntéstámogató AI-javaslat.</p>
+
     <button onclick="copyTicket()">📋 Szelvény másolása</button>
+    <button onclick="saveTicket()">💾 Szelvény mentése</button>
   `;
 
   box.innerHTML = html;
@@ -246,14 +284,52 @@ function buildTicket(mode = "safe"){
 }
 
 function copyTicket(){
-  const text = document.getElementById("ticketBox").innerText;
-
   if(navigator.clipboard){
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(lastTicketText);
     alert("Szelvény kimásolva!");
   }else{
-    alert(text);
+    alert(lastTicketText);
   }
+}
+
+function saveTicket(){
+  if(!lastTicketText){
+    alert("Előbb készíts szelvényt!");
+    return;
+  }
+
+  journal.unshift({
+    date:new Date().toLocaleString("hu-HU"),
+    text:lastTicketText
+  });
+
+  localStorage.setItem("tipJournal", JSON.stringify(journal));
+  alert("Szelvény mentve a tippnaplóba!");
+  showJournal();
+}
+
+function showJournal(){
+  const box = document.getElementById("journalList");
+
+  if(!journal.length){
+    box.innerHTML = "<p>Még nincs mentett szelvény.</p>";
+    return;
+  }
+
+  box.innerHTML = journal.map(j => `
+    <div class="ticketItem">
+      <b>${j.date}</b>
+      <pre>${j.text}</pre>
+    </div>
+  `).join("");
+}
+
+function clearJournal(){
+  if(!confirm("Biztosan törlöd a tippnaplót?")) return;
+
+  journal = [];
+  localStorage.setItem("tipJournal", JSON.stringify(journal));
+  showJournal();
 }
 
 renderMatches();
