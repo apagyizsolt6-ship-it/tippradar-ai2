@@ -28,6 +28,19 @@ function parseMatchLine(line){
   }
 
   return null;
+ if(p.length === 1 && line.includes("-")){
+  const teams = line.split("-").map(x => x.trim());
+  const defaultMarket = document.getElementById("defaultMarket")?.value || "Győztes";
+  const defaultOdds = parseFloat(document.getElementById("defaultOdds")?.value || "1.80");
+
+  return {
+    league:"Kézi import",
+    home:teams[0],
+    away:teams[1],
+    odds:defaultOdds,
+    market:defaultMarket
+  };
+} 
 }
 
 function loadManualMatches(){
