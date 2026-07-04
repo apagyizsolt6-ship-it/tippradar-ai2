@@ -4,6 +4,7 @@ let currentView = "all";
 let lastTicketText = "";
 
 function parseMatchLine(line){
+  line = line.trim();
   const p = line.split("|").map(x => x.trim()).filter(Boolean);
 
   if(p.length >= 5){
@@ -15,21 +16,24 @@ function parseMatchLine(line){
       market:p[4]
     };
   }
-if(p.length === 1 && line.toLowerCase().includes(" vs ")){
-  const teams = line.split(/ vs /i).map(x => x.trim());
-  const defaultMarket = document.getElementById("defaultMarket")?.value || "Győztes";
-  const defaultOdds = parseFloat((document.getElementById("defaultOdds")?.value || "1.80").replace(",", "."));
 
-  return {
-    league:"Kézi import",
-    home:teams[0],
-    away:teams[1],
-    odds:defaultOdds,
-    market:defaultMarket
-  };
-}
+  if(line.toLowerCase().includes(" vs ")){
+    const teams = line.split(/ vs /i).map(x => x.trim());
+    const defaultMarket = document.getElementById("defaultMarket")?.value || "Győztes";
+    const defaultOdds = parseFloat((document.getElementById("defaultOdds")?.value || "1.80").replace(",", "."));
+
+    return {
+      league:"Kézi import",
+      home:teams[0],
+      away:teams[1],
+      odds:defaultOdds,
+      market:defaultMarket
+    };
+  }
+
   if(p.length >= 3 && p[0].includes("-")){
     const teams = p[0].split("-").map(x => x.trim());
+
     return {
       league:"Kézi import",
       home:teams[0],
@@ -39,20 +43,21 @@ if(p.length === 1 && line.toLowerCase().includes(" vs ")){
     };
   }
 
-  return null;
- if(p.length === 1 && line.includes("-")){
-  const teams = line.split("-").map(x => x.trim());
-  const defaultMarket = document.getElementById("defaultMarket")?.value || "Győztes";
-  const defaultOdds = parseFloat(document.getElementById("defaultOdds")?.value || "1.80");
+  if(line.includes("-")){
+    const teams = line.split("-").map(x => x.trim());
+    const defaultMarket = document.getElementById("defaultMarket")?.value || "Győztes";
+    const defaultOdds = parseFloat((document.getElementById("defaultOdds")?.value || "1.80").replace(",", "."));
 
-  return {
-    league:"Kézi import",
-    home:teams[0],
-    away:teams[1],
-    odds:defaultOdds,
-    market:defaultMarket
-  };
-} 
+    return {
+      league:"Kézi import",
+      home:teams[0],
+      away:teams[1],
+      odds:defaultOdds,
+      market:defaultMarket
+    };
+  }
+
+  return null;
 }
 
 function loadManualMatches(){
