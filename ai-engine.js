@@ -1,104 +1,94 @@
-/* TippRadar AI v4.0 - AI Engine
-   Szabályalapú döntéstámogató motor.
-   Nem garantál nyereményt.
-*/
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TippRadar AI v4.0 Stabil</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-function detectMarketType(marketText){
-  const market = (marketText || "").toLowerCase();
+<body>
 
-  if(market.includes("btts") || market.includes("mindkét")) return "BTTS";
-  if(market.includes("gól") || market.includes("over") || market.includes("under")) return "GÓL";
-  if(market.includes("lap") || market.includes("sárga")) return "LAP";
-  if(market.includes("szöglet") || market.includes("corner")) return "SZÖGLET";
-  if(market.includes("les") || market.includes("offside")) return "LES";
-  if(market.includes("szabálytalanság") || market.includes("fault") || market.includes("foul")) return "SZABÁLYTALANSÁG";
-  if(market.includes("döntetlen") || market === "x") return "DÖNTETLEN";
-  if(market.includes("győztes") || market.includes("hazai") || market.includes("vendég")) return "GYŐZTES";
+<header>
+  <h1>⚽ TippRadar AI</h1>
+  <div class="version">v4.0 STABIL</div>
+  <p>Gyors import • AI pontozás • Szelvényépítő</p>
+</header>
 
-  return "EGYÉB";
-}
+<main>
 
-function oddsScore(odds){
-  odds = Number(odds || 0);
+  <section class="panel">
+    <h2>📥 Meccsek importálása</h2>
+    <p class="hint">Gyors forma: Kanada vs Marokkó</p>
+    <p class="hint">Teljes forma: Liga | Hazai | Vendég | Odds | Piac</p>
 
-  if(odds >= 1.30 && odds <= 1.60) return { points:14, reason:"stabil odds" };
-  if(odds > 1.60 && odds <= 2.15) return { points:23, reason:"jó value odds" };
-  if(odds > 2.15 && odds <= 3.50) return { points:10, reason:"magasabb odds, nagyobb kockázat" };
-  return { points:-10, reason:"kockázatos odds-tartomány" };
-}
+    <textarea id="matchInput" placeholder="Kanada vs Marokkó&#10;Paraguay vs Franciaország&#10;Ajax vs Panathinaikos"></textarea>
 
-function marketScore(type){
-  switch(type){
-    case "GÓL": return { points:10, reason:"gólos piac" };
-    case "BTTS": return { points:9, reason:"BTTS piac" };
-    case "LAP": return { points:11, reason:"lapos piac" };
-    case "SZÖGLET": return { points:10, reason:"szöglet piac" };
-    case "LES": return { points:8, reason:"les piac" };
-    case "SZABÁLYTALANSÁG": return { points:8, reason:"szabálytalanság piac" };
-    case "DÖNTETLEN": return { points:4, reason:"döntetlen piac, magasabb kockázat" };
-    case "GYŐZTES": return { points:5, reason:"eredmény piac" };
-    default: return { points:2, reason:"általános piac" };
-  }
-}
+    <button onclick="loadManualMatches()">Meccsek betöltése</button>
+  </section>
 
-function leagueScore(leagueText){
-  const league = (leagueText || "").toLowerCase();
+  <section class="panel">
+    <input id="searchInput" placeholder="Keresés csapatra, ligára vagy piacra..." oninput="renderMatches()">
 
-  if(
-    league.includes("premier") ||
-    league.includes("serie") ||
-    league.includes("la liga") ||
-    league.includes("bundesliga") ||
-    league.includes("bajnokok")
-  ){
-    return { points:7, reason:"erős bajnokság" };
-  }
+    <select id="marketFilter" onchange="renderMatches()">
+      <option value="all">Minden piac</option>
+      <option value="GÓL">⚽ Gólok</option>
+      <option value="BTTS">🎯 BTTS</option>
+      <option value="LAP">🟨 Lapok</option>
+      <option value="SZÖGLET">🚩 Szögletek</option>
+      <option value="LES">🚫 Lesek</option>
+      <option value="SZABÁLYTALANSÁG">🚫 Szabálytalanságok</option>
+      <option value="DÖNTETLEN">🤝 Döntetlen</option>
+      <option value="GYŐZTES">🏆 Győztes</option>
+    </select>
 
-  if(league.includes("nb") || league.includes("magyar")){
-    return { points:4, reason:"magyar bajnokság" };
-  }
+    <select id="defaultMarket">
+      <option value="Győztes">🏆 Győztes</option>
+      <option value="Over 2.5 gól">⚽ Over 2.5 gól</option>
+      <option value="BTTS">🎯 BTTS</option>
+      <option value="Lap Over">🟨 Lap Over</option>
+      <option value="Szöglet Over">🚩 Szöglet Over</option>
+      <option value="Les Over">🚫 Les Over</option>
+      <option value="Szabálytalanság Over">🚫 Szabálytalanság Over</option>
+      <option value="Döntetlen">🤝 Döntetlen</option>
+    </select>
 
-  return { points:2, reason:"általános bajnokság" };
-}
+    <input id="defaultOdds" type="text" value="1.80" placeholder="Alap odds, pl. 1.80">
+    <input id="bankrollInput" type="number" placeholder="Teljes bankroll Ft-ban">
+    <input id="stakeInput" type="number" placeholder="Tét Ft-ban">
 
-function getRisk(score){
-  if(score >= 86) return "Alacsony";
-  if(score >= 72) return "Közepes";
-  return "Magas";
-}
+    <button onclick="showAll()">🏠 Összes meccs</button>
+    <button onclick="showTop()">🔥 Top AI lista</button>
+    <button onclick="showFavorites()">⭐ Kedvencek</button>
+    <button onclick="buildTicket('safe')">🧾 Biztonságos szelvény</button>
+    <button onclick="buildTicket('value')">🎯 Value szelvény</button>
+    <button onclick="buildTicket('high')">🚀 Magas odds szelvény</button>
+  </section>
 
-function getLabel(score){
-  if(score >= 88) return "Nagyon erős AI jel";
-  if(score >= 80) return "Erős value jelölt";
-  if(score >= 70) return "Közepes adatjel";
-  return "Gyenge jel";
-}
+  <section id="statsBox" class="panel"></section>
+  <section id="ticketBox" class="panel hidden"></section>
 
-function calculateAI(match){
-  let score = 45;
-  let reasons = [];
+  <section id="journalBox" class="panel">
+    <h2>📓 Tippnapló</h2>
+    <button onclick="showJournal()">Mentett szelvények mutatása</button>
+    <button onclick="clearJournal()">Tippnapló törlése</button>
+    <div id="journalList"></div>
+  </section>
 
-  const type = detectMarketType(match.market);
-  const oddsPart = oddsScore(match.odds);
-  const marketPart = marketScore(type);
-  const leaguePart = leagueScore(match.league);
+  <section id="matches"></section>
 
-  score += oddsPart.points;
-  score += marketPart.points;
-  score += leaguePart.points;
+</main>
 
-  reasons.push(oddsPart.reason);
-  reasons.push(marketPart.reason);
-  reasons.push(leaguePart.reason);
+<nav>
+  <button onclick="showAll()">🏠<br>Mai</button>
+  <button onclick="showTop()">🔥<br>Top</button>
+  <button onclick="showFavorites()">⭐<br>Kedvenc</button>
+  <button onclick="buildTicket('safe')">🧾<br>Szelvény</button>
+</nav>
 
-  score = Math.max(1, Math.min(98, score));
+<script src="matches.js"></script>
+<script src="ai-engine.js"></script>
+<script src="app.js"></script>
 
-  return {
-    score,
-    label:getLabel(score),
-    confidence:score + "%",
-    risk:getRisk(score),
-    marketType:type,
-    reasons:reasons.join(", ")
-  };
-}
+</body>
+</html>
