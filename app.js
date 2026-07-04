@@ -31,7 +31,6 @@ function parseMatchLine(line){
         odds: defaultOdds,
         market: defaultMarket
     };
-}
   }
 
   if(p.length >= 3 && p[0].includes("-")){
