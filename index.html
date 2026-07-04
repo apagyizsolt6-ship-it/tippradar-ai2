@@ -29,7 +29,17 @@
 
   <section class="panel">
     <input id="searchInput" placeholder="Keresés csapatra, ligára vagy piacra..." oninput="renderMatches()">
-
+<select id="marketFilter" onchange="renderMatches()">
+  <option value="all">Minden piac</option>
+  <option value="GÓL">⚽ Gólok</option>
+  <option value="BTTS">🎯 BTTS</option>
+  <option value="LAP">🟨 Lapok</option>
+  <option value="SZÖGLET">🚩 Szögletek</option>
+  <option value="LES">🚫 Lesek</option>
+  <option value="SZABÁLYTALANSÁG">🚫 Szabálytalanságok</option>
+  <option value="DÖNTETLEN">🤝 Döntetlen</option>
+  <option value="GYŐZTES">🏆 Győztes</option>
+</select>
     <input id="bankrollInput" type="number" placeholder="Teljes bankroll Ft-ban, pl. 50000">
     <input id="stakeInput" type="number" placeholder="Tét Ft-ban, pl. 1000">
 
