@@ -1,61 +1,67 @@
+let matches = [];
 let favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
 let journal = JSON.parse(localStorage.getItem("tipJournal") || "[]");
 let currentView = "all";
 let lastTicketText = "";
 
+function getDefaultMarket(){
+  return document.getElementById("defaultMarket")?.value || "Győztes";
+}
+
+function getDefaultOdds(){
+  const raw = document.getElementById("defaultOdds")?.value || "1.80";
+  return parseFloat(raw.replace(",", ".")) || 1.80;
+}
+
 function parseMatchLine(line){
   line = line.trim();
+  if(!line) return null;
+
   const p = line.split("|").map(x => x.trim()).filter(Boolean);
 
   if(p.length >= 5){
     return {
-      league:p[0],
-      home:p[1],
-      away:p[2],
-      odds:parseFloat(p[3].replace(",", ".")),
-      market:p[4]
+      league: p[0],
+      home: p[1],
+      away: p[2],
+      odds: parseFloat(p[3].replace(",", ".")),
+      market: p[4]
     };
   }
 
   if(line.toLowerCase().includes(" vs ")){
     const teams = line.split(/ vs /i).map(x => x.trim());
-    const defaultMarket = document.getElementById("defaultMarket")?.value || "Győztes";
-    const defaultOddsInput = document.getElementById("defaultOdds");
-    const defaultOddsRaw = defaultOddsInput ? defaultOddsInput.value.replace(",", ".") : "1.80";
-    const defaultOdds = parseFloat(defaultOddsRaw || "1.80");
 
     return {
-        league: "Kézi import",
-        home: teams[0],
-        away: teams[1],
-        odds: defaultOdds,
-        market: defaultMarket
+      league: "Kézi import",
+      home: teams[0],
+      away: teams[1],
+      odds: getDefaultOdds(),
+      market: getDefaultMarket()
     };
   }
+
   if(p.length >= 3 && p[0].includes("-")){
     const teams = p[0].split("-").map(x => x.trim());
 
     return {
-      league:"Kézi import",
-      home:teams[0],
-      away:teams[1],
-      odds:parseFloat(p[1].replace(",", ".")),
-      market:p[2]
+      league: "Kézi import",
+      home: teams[0],
+      away: teams[1],
+      odds: parseFloat(p[1].replace(",", ".")),
+      market: p[2]
     };
   }
 
   if(line.includes("-")){
     const teams = line.split("-").map(x => x.trim());
-  const defaultOddsInput = document.getElementById("defaultOdds");
-const defaultOddsRaw = defaultOddsInput ? defaultOddsInput.value.replace(",", ".") : "1.80";
-const defaultOdds = parseFloat(defaultOddsRaw || "1.80");
 
     return {
-      league:"Kézi import",
-      home:teams[0],
-      away:teams[1],
-      odds:defaultOdds,
-      market:defaultMarket
+      league: "Kézi import",
+      home: teams[0],
+      away: teams[1],
+      odds: getDefaultOdds(),
+      market: getDefaultMarket()
     };
   }
 
@@ -63,8 +69,14 @@ const defaultOdds = parseFloat(defaultOddsRaw || "1.80");
 }
 
 function loadManualMatches(){
-  alert("Gomb működik");
-  const text = document.getElementById("matchInput").value.trim();
+  const input = document.getElementById("matchInput");
+
+  if(!input){
+    alert("Hiba: nincs matchInput mező.");
+    return;
+  }
+
+  const text = input.value.trim();
 
   if(!text){
     alert("Adj meg legalább egy meccset!");
@@ -74,7 +86,7 @@ function loadManualMatches(){
   matches = [];
   let errors = [];
 
-  text.split("\n").forEach((line,index)=>{
+  text.split("\n").forEach((line, index) => {
     const match = parseMatchLine(line);
 
     if(match && match.home && match.away && !isNaN(match.odds)){
@@ -85,12 +97,20 @@ function loadManualMatches(){
   });
 
   currentView = "all";
+
+  const marketFilter = document.getElementById("marketFilter");
+  if(marketFilter){
+    marketFilter.value = "all";
+  }
+
   hideTicket();
   renderMatches();
 
-  alert(errors.length
-    ? `Betöltve: ${matches.length} meccs. Hibás sorok: ${errors.join(", ")}`
-    : `Sikeres import: ${matches.length} meccs.`);
+  alert(
+    errors.length
+      ? `Betöltve: ${matches.length} meccs. Hibás sorok: ${errors.join(", ")}`
+      : `Sikeres import: ${matches.length} meccs.`
+  );
 }
 
 function matchId(match){
@@ -107,47 +127,50 @@ function toggleFavorite(id){
 }
 
 function getVisibleMatches(){
-  const q = (document.getElementById("searchInput").value || "").toLowerCase();const marketFilter = document.getElementById("marketFilter")?.value || "all";
-  
+  const q = (document.getElementById("searchInput")?.value || "").toLowerCase();
+  const marketFilter = document.getElementById("marketFilter")?.value || "all";
+
   let list = [...matches];
 
   if(currentView === "top"){
-    list = list.sort((a,b)=>calculateAI(b).score - calculateAI(a).score).slice(0,10);
+    list = list.sort((a,b) => calculateAI(b).score - calculateAI(a).score).slice(0, 10);
   }
 
   if(currentView === "favorites"){
     list = list.filter(m => favorites.includes(matchId(m)));
   }
-return list.filter(m => {
-  const ai = calculateAI(m);
-  const matchesSearch =
-    m.home.toLowerCase().includes(q) ||
-    m.away.toLowerCase().includes(q) ||
-    m.league.toLowerCase().includes(q) ||
-    (m.market || "").toLowerCase().includes(q);
 
-  const matchesMarket =
-    marketFilter === "all" || ai.marketType === marketFilter;
+  return list.filter(m => {
+    const ai = calculateAI(m);
 
-  return matchesSearch && matchesMarket;
-});
+    const searchOk =
+      m.home.toLowerCase().includes(q) ||
+      m.away.toLowerCase().includes(q) ||
+      m.league.toLowerCase().includes(q) ||
+      (m.market || "").toLowerCase().includes(q);
+
+    const marketOk =
+      marketFilter === "all" || ai.marketType === marketFilter;
+
+    return searchOk && marketOk;
+  });
+}
 
 function renderStats(){
   const box = document.getElementById("statsBox");
   if(!box) return;
 
   const total = matches.length;
-  const topCount = matches.filter(m => calculateAI(m).score >= 80).length;
-  const favCount = favorites.length;
+  const top = matches.filter(m => calculateAI(m).score >= 80).length;
   const avg = total
-    ? Math.round(matches.reduce((sum,m)=>sum + calculateAI(m).score,0) / total)
+    ? Math.round(matches.reduce((sum,m) => sum + calculateAI(m).score, 0) / total)
     : 0;
 
   box.innerHTML = `
     <div class="statBox"><b>${total}</b><span>Meccs</span></div>
-    <div class="statBox"><b>${topCount}</b><span>Top AI</span></div>
+    <div class="statBox"><b>${top}</b><span>Top AI</span></div>
     <div class="statBox"><b>${avg}%</b><span>Átlag AI</span></div>
-    <div class="statBox"><b>${favCount}</b><span>Kedvenc</span></div>
+    <div class="statBox"><b>${favorites.length}</b><span>Kedvenc</span></div>
   `;
 }
 
@@ -188,15 +211,17 @@ function renderCard(match){
 function renderMatches(){
   renderStats();
 
-  const list = document.getElementById("matches");
-  const filtered = getVisibleMatches();
+  const box = document.getElementById("matches");
+  if(!box) return;
 
-  if(!filtered.length){
-    list.innerHTML = "<div class='card'>Nincs találat.</div>";
+  const list = getVisibleMatches();
+
+  if(!list.length){
+    box.innerHTML = "<div class='card'>Nincs találat.</div>";
     return;
   }
 
-  list.innerHTML = filtered.map(renderCard).join("");
+  box.innerHTML = list.map(renderCard).join("");
 }
 
 function showAll(){
@@ -220,14 +245,15 @@ function showFavorites(){
 function hideTicket(){
   const box = document.getElementById("ticketBox");
   if(!box) return;
+
   box.classList.add("hidden");
   box.innerHTML = "";
 }
 
 function getTicketSettings(mode){
-  if(mode === "value") return { count:4, minScore:80, name:"Value" };
-  if(mode === "high") return { count:6, minScore:65, name:"Magas odds" };
-  return { count:3, minScore:72, name:"Biztonságos" };
+  if(mode === "value") return { count: 4, minScore: 80, name: "Value" };
+  if(mode === "high") return { count: 6, minScore: 65, name: "Magas odds" };
+  return { count: 3, minScore: 72, name: "Biztonságos" };
 }
 
 function ticketRisk(avgScore, odds){
@@ -238,7 +264,10 @@ function ticketRisk(avgScore, odds){
 
 function bankrollAdvice(stake){
   const bankroll = Number(document.getElementById("bankrollInput")?.value || 0);
-  if(!bankroll || !stake) return "Nincs bankroll-adat.";
+
+  if(!bankroll || !stake){
+    return "Nincs bankroll-adat.";
+  }
 
   const percent = (stake / bankroll) * 100;
 
@@ -252,10 +281,12 @@ function buildTicket(mode = "safe"){
 
   const selected = [...matches]
     .filter(m => calculateAI(m).score >= settings.minScore)
-    .sort((a,b)=>calculateAI(b).score - calculateAI(a).score)
+    .sort((a,b) => calculateAI(b).score - calculateAI(a).score)
     .slice(0, settings.count);
 
   const box = document.getElementById("ticketBox");
+  if(!box) return;
+
   box.classList.remove("hidden");
 
   if(!selected.length){
@@ -263,18 +294,20 @@ function buildTicket(mode = "safe"){
       <h2>🧾 AI szelvény</h2>
       <p>Nincs elég erős meccs ehhez a szelvénytípushoz.</p>
     `;
+    box.scrollIntoView({behavior:"smooth"});
     return;
   }
 
   let odds = 1;
-  let avgScore = 0;
+  let totalScore = 0;
   let text = `AI szelvény - ${settings.name}\n\n`;
   let html = `<h2>🧾 AI szelvény</h2>`;
 
-  selected.forEach(m=>{
-    odds *= m.odds;
+  selected.forEach(m => {
     const ai = calculateAI(m);
-    avgScore += ai.score;
+
+    odds *= m.odds;
+    totalScore += ai.score;
 
     text += `${m.home} - ${m.away} | ${m.odds} | ${m.market} | AI ${ai.score}/100\n`;
 
@@ -289,14 +322,19 @@ function buildTicket(mode = "safe"){
     `;
   });
 
-  avgScore = Math.round(avgScore / selected.length);
-
+  const avgScore = Math.round(totalScore / selected.length);
   const stake = Number(document.getElementById("stakeInput")?.value || 0);
   const win = Math.round(stake * odds);
   const risk = ticketRisk(avgScore, odds);
   const advice = bankrollAdvice(stake);
 
-  text += `\nÖssz odds: ${odds.toFixed(2)}\nTét: ${stake} Ft\nVárható nyeremény: ${win} Ft\nKockázat: ${risk}`;
+  text += `
+Össz odds: ${odds.toFixed(2)}
+Tét: ${stake} Ft
+Várható nyeremény: ${win} Ft
+Kockázat: ${risk}
+Bankroll: ${advice}
+`;
 
   lastTicketText = text;
 
@@ -323,6 +361,11 @@ function buildTicket(mode = "safe"){
 }
 
 function copyTicket(){
+  if(!lastTicketText){
+    alert("Előbb készíts szelvényt!");
+    return;
+  }
+
   if(navigator.clipboard){
     navigator.clipboard.writeText(lastTicketText);
     alert("Szelvény kimásolva!");
@@ -338,8 +381,8 @@ function saveTicket(){
   }
 
   journal.unshift({
-    date:new Date().toLocaleString("hu-HU"),
-    text:lastTicketText
+    date: new Date().toLocaleString("hu-HU"),
+    text: lastTicketText
   });
 
   localStorage.setItem("tipJournal", JSON.stringify(journal));
@@ -349,6 +392,7 @@ function saveTicket(){
 
 function showJournal(){
   const box = document.getElementById("journalList");
+  if(!box) return;
 
   if(!journal.length){
     box.innerHTML = "<p>Még nincs mentett szelvény.</p>";
