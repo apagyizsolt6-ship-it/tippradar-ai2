@@ -30,6 +30,18 @@
   <section class="panel">
     <input id="searchInput" placeholder="Keresés csapatra, ligára vagy piacra..." oninput="renderMatches()">
 <select id="marketFilter" onchange="renderMatches()">
+ <select id="defaultMarket">
+  <option value="Győztes">🏆 Győztes</option>
+  <option value="Over 2.5 gól">⚽ Over 2.5 gól</option>
+  <option value="BTTS">🎯 BTTS</option>
+  <option value="Lap Over">🟨 Lap Over</option>
+  <option value="Szöglet Over">🚩 Szöglet Over</option>
+  <option value="Les Over">🚫 Les Over</option>
+  <option value="Szabálytalanság Over">🚫 Szabálytalanság Over</option>
+  <option value="Döntetlen">🤝 Döntetlen</option>
+</select>
+
+<input id="defaultOdds" type="number" step="0.01" placeholder="Alap odds, pl. 1.80" value="1.80"> 
   <option value="all">Minden piac</option>
   <option value="GÓL">⚽ Gólok</option>
   <option value="BTTS">🎯 BTTS</option>
