@@ -74,7 +74,8 @@ function toggleFavorite(id){
 }
 
 function getVisibleMatches(){
-  const q = (document.getElementById("searchInput").value || "").toLowerCase();
+  const q = (document.getElementById("searchInput").value || "").toLowerCase();const marketFilter = document.getElementById("marketFilter")?.value || "all";
+  
   let list = [...matches];
 
   if(currentView === "top"){
@@ -84,14 +85,19 @@ function getVisibleMatches(){
   if(currentView === "favorites"){
     list = list.filter(m => favorites.includes(matchId(m)));
   }
-
-  return list.filter(m =>
+return list.filter(m => {
+  const ai = calculateAI(m);
+  const matchesSearch =
     m.home.toLowerCase().includes(q) ||
     m.away.toLowerCase().includes(q) ||
     m.league.toLowerCase().includes(q) ||
-    (m.market || "").toLowerCase().includes(q)
-  );
-}
+    (m.market || "").toLowerCase().includes(q);
+
+  const matchesMarket =
+    marketFilter === "all" || ai.marketType === marketFilter;
+
+  return matchesSearch && matchesMarket;
+});
 
 function renderStats(){
   const box = document.getElementById("statsBox");
