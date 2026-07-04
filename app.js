@@ -32,7 +32,6 @@ function parseMatchLine(line){
         market: defaultMarket
     };
   }
-
   if(p.length >= 3 && p[0].includes("-")){
     const teams = p[0].split("-").map(x => x.trim());
 
