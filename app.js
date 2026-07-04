@@ -63,6 +63,7 @@ const defaultOdds = parseFloat(defaultOddsRaw || "1.80");
 }
 
 function loadManualMatches(){
+  alert("Gomb működik");
   const text = document.getElementById("matchInput").value.trim();
 
   if(!text){
