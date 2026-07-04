@@ -18,16 +18,20 @@ function parseMatchLine(line){
   }
 
   if(line.toLowerCase().includes(" vs ")){
+    const teams = line.split(/ vs /i).map(x => x.trim());
+    const defaultMarket = document.getElementById("defaultMarket")?.value || "Győztes";
     const defaultOddsInput = document.getElementById("defaultOdds");
-const defaultOddsRaw = defaultOddsInput ? defaultOddsInput.value.replace(",", ".") : "1.80";
-const defaultOdds = parseFloat(defaultOddsRaw || "1.80");
+    const defaultOddsRaw = defaultOddsInput ? defaultOddsInput.value.replace(",", ".") : "1.80";
+    const defaultOdds = parseFloat(defaultOddsRaw || "1.80");
+
     return {
-      league:"Kézi import",
-      home:teams[0],
-      away:teams[1],
-      odds:defaultOdds,
-      market:defaultMarket
+        league: "Kézi import",
+        home: teams[0],
+        away: teams[1],
+        odds: defaultOdds,
+        market: defaultMarket
     };
+}
   }
 
   if(p.length >= 3 && p[0].includes("-")){
