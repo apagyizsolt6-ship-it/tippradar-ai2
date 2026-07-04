@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TippRadar AI Stabil</title>
+  <title>TippRadar AI v4.0 Stabil</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,8 +11,8 @@
 
 <header>
   <h1>⚽ TippRadar AI</h1>
-  <div class="version">STABIL KIADÁS</div>
-  <p>Kézi meccsimport • AI pontozás • Szelvényépítő</p>
+  <div class="version">v4.0 STABIL</div>
+  <p>Gyors import • AI pontozás • Szelvényépítő</p>
 </header>
 
 <main>
@@ -28,7 +28,7 @@
   </section>
 
   <section class="panel">
-    <input id="searchInput" placeholder="Keresés..." oninput="renderMatches()">
+    <input id="searchInput" placeholder="Keresés csapatra, ligára vagy piacra..." oninput="renderMatches()">
 
     <select id="marketFilter" onchange="renderMatches()">
       <option value="all">Minden piac</option>
@@ -53,7 +53,7 @@
       <option value="Döntetlen">🤝 Döntetlen</option>
     </select>
 
-    <input id="defaultOdds" type="text" placeholder="Alap odds, pl. 1.80" value="1.80">
+    <input id="defaultOdds" type="text" value="1.80" placeholder="Alap odds, pl. 1.80">
     <input id="bankrollInput" type="number" placeholder="Teljes bankroll Ft-ban">
     <input id="stakeInput" type="number" placeholder="Tét Ft-ban">
 
@@ -67,6 +67,14 @@
 
   <section id="statsBox" class="panel"></section>
   <section id="ticketBox" class="panel hidden"></section>
+
+  <section id="journalBox" class="panel">
+    <h2>📓 Tippnapló</h2>
+    <button onclick="showJournal()">Mentett szelvények mutatása</button>
+    <button onclick="clearJournal()">Tippnapló törlése</button>
+    <div id="journalList"></div>
+  </section>
+
   <section id="matches"></section>
 
 </main>
