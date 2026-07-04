@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TippRadar AI v3.0 PRO</title>
+  <title>TippRadar AI Stabil</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,52 +11,51 @@
 
 <header>
   <h1>⚽ TippRadar AI</h1>
-  <div class="version">v3.0 PRO</div>
-  <p>AI szelvényépítő • Bankroll • Tippnapló</p>
+  <div class="version">STABIL KIADÁS</div>
+  <p>Kézi meccsimport • AI pontozás • Szelvényépítő</p>
 </header>
 
 <main>
 
   <section class="panel">
     <h2>📥 Meccsek importálása</h2>
-    <p class="hint">Egyszerű forma: Hazai - Vendég | Odds | Piac</p>
-    <p class="hint">Részletes forma: Liga | Hazai | Vendég | Odds | Piac</p>
+    <p class="hint">Gyors forma: Kanada vs Marokkó</p>
+    <p class="hint">Teljes forma: Liga | Hazai | Vendég | Odds | Piac</p>
 
-    <textarea id="matchInput" placeholder="Roma - Lazio | 1.82 | Lap Over&#10;Barcelona - Valencia | 1.67 | Over 2.5&#10;Liverpool - Arsenal | 1.74 | BTTS"></textarea>
+    <textarea id="matchInput" placeholder="Kanada vs Marokkó&#10;Paraguay vs Franciaország&#10;Ajax vs Panathinaikos"></textarea>
 
-<button onclick="alert('HTML gomb működik'); loadManualMatches()">Meccsek betöltése</button>
+    <button onclick="loadManualMatches()">Meccsek betöltése</button>
   </section>
 
   <section class="panel">
- <input id="searchInput" placeholder="Keresés csapatra, ligára vagy piacra..." oninput="renderMatches()">
+    <input id="searchInput" placeholder="Keresés..." oninput="renderMatches()">
 
-<select id="marketFilter" onchange="renderMatches()">
-  <option value="all">Minden piac</option>
-  <option value="GÓL">⚽ Gólok</option>
-  <option value="BTTS">🎯 BTTS</option>
-  <option value="LAP">🟨 Lapok</option>
-  <option value="SZÖGLET">🚩 Szögletek</option>
-  <option value="LES">🚫 Lesek</option>
-  <option value="SZABÁLYTALANSÁG">🚫 Szabálytalanságok</option>
-  <option value="DÖNTETLEN">🤝 Döntetlen</option>
-  <option value="GYŐZTES">🏆 Győztes</option>
-</select>
+    <select id="marketFilter" onchange="renderMatches()">
+      <option value="all">Minden piac</option>
+      <option value="GÓL">⚽ Gólok</option>
+      <option value="BTTS">🎯 BTTS</option>
+      <option value="LAP">🟨 Lapok</option>
+      <option value="SZÖGLET">🚩 Szögletek</option>
+      <option value="LES">🚫 Lesek</option>
+      <option value="SZABÁLYTALANSÁG">🚫 Szabálytalanságok</option>
+      <option value="DÖNTETLEN">🤝 Döntetlen</option>
+      <option value="GYŐZTES">🏆 Győztes</option>
+    </select>
 
-<select id="defaultMarket">
-  <option value="Győztes">🏆 Győztes</option>
-  <option value="Over 2.5 gól">⚽ Over 2.5 gól</option>
-  <option value="BTTS">🎯 BTTS</option>
-  <option value="Lap Over">🟨 Lap Over</option>
-  <option value="Szöglet Over">🚩 Szöglet Over</option>
-  <option value="Les Over">🚫 Les Over</option>
-  <option value="Szabálytalanság Over">🚫 Szabálytalanság Over</option>
-  <option value="Döntetlen">🤝 Döntetlen</option>
-</select>
+    <select id="defaultMarket">
+      <option value="Győztes">🏆 Győztes</option>
+      <option value="Over 2.5 gól">⚽ Over 2.5 gól</option>
+      <option value="BTTS">🎯 BTTS</option>
+      <option value="Lap Over">🟨 Lap Over</option>
+      <option value="Szöglet Over">🚩 Szöglet Over</option>
+      <option value="Les Over">🚫 Les Over</option>
+      <option value="Szabálytalanság Over">🚫 Szabálytalanság Over</option>
+      <option value="Döntetlen">🤝 Döntetlen</option>
+    </select>
 
-<input id="defaultOdds" type="number" step="0.01" placeholder="Alap odds, pl. 1.80" value="1.80">
-
-<input id="bankrollInput" type="number" placeholder="Teljes bankroll Ft-ban, pl. 50000">
-<input id="stakeInput" type="number" placeholder="Tét Ft-ban, pl. 1000"> 
+    <input id="defaultOdds" type="text" placeholder="Alap odds, pl. 1.80" value="1.80">
+    <input id="bankrollInput" type="number" placeholder="Teljes bankroll Ft-ban">
+    <input id="stakeInput" type="number" placeholder="Tét Ft-ban">
 
     <button onclick="showAll()">🏠 Összes meccs</button>
     <button onclick="showTop()">🔥 Top AI lista</button>
@@ -67,16 +66,7 @@
   </section>
 
   <section id="statsBox" class="panel"></section>
-
   <section id="ticketBox" class="panel hidden"></section>
-
-  <section id="journalBox" class="panel">
-    <h2>📓 Tippnapló</h2>
-    <button onclick="showJournal()">Mentett szelvények mutatása</button>
-    <button onclick="clearJournal()">Tippnapló törlése</button>
-    <div id="journalList"></div>
-  </section>
-
   <section id="matches"></section>
 
 </main>
